@@ -1,25 +1,36 @@
 
 # Sourcegraph for PowerShell
 
+[![powershellgallery](https://img.shields.io/powershellgallery/v/Sourcegraph.svg)](https://www.powershellgallery.com/packages/Sourcegraph)
+[![downloads](https://img.shields.io/powershellgallery/dt/Sourcegraph.svg?label=downloads)](https://www.powershellgallery.com/packages/Sourcegraph)
+
 ## Installation
 
 ```powershell
-Install-Module -Scope CurrentUser Sourcegraph
+Install-Module Sourcegraph
 ```
 
-## Usage
+## Usage example
 
 ```powershell
-Invoke-SourcegraphApiRequest [-Query] <string> -Token <string> [-Endpoint <string>] [-Variables <hashtable>]  [<CommonParameters>]
+Invoke-SourcegraphApiRequest -Variables @{query = 'repogroup:sample test'} -Query @'
+    query($query: String!) {
+        search(query: $query) {
+            results {
+                resultCount
+            }
+        }
+    }
+'@
 ```
 
-Aliases: `Invoke-SGApiRequest`
+See `Get-Help Invoke-SourcegraphApiRequest` for detailed documentation.
 
 ## Configuration
 
-Add this to your `$PROFILE`:
+You can configure a default endpoint and token to be used by modifying `$PSDefaultParameterValues` in your `$PROFILE`:
 
 ```powershell
-$PSDefaultParameterValues['*Sourcegraph*:Token'] = 'your default token'
-$PSDefaultParameterValues['*Sourcegraph*:Endpoint'] = 'your default endpoint (default https://sourcegraph.com/.api/graphql)'
+$PSDefaultParameterValues['*Sourcegraph*:Token'] = '5c01fd47a2b2187c2947f8a2eb76b358f3ed0e26'
+$PSDefaultParameterValues['*Sourcegraph*:Endpoint'] = 'https://sourcegraph.example.com'
 ```
