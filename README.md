@@ -1,13 +1,13 @@
 
 # Sourcegraph for PowerShell
 
-[![powershellgallery](https://img.shields.io/powershellgallery/v/Sourcegraph.svg)](https://www.powershellgallery.com/packages/Sourcegraph)
-[![downloads](https://img.shields.io/powershellgallery/dt/Sourcegraph.svg?label=downloads)](https://www.powershellgallery.com/packages/Sourcegraph)
+[![powershellgallery](https://img.shields.io/powershellgallery/v/PSSourcegraph.svg)](https://www.powershellgallery.com/packages/PSSourcegraph)
+[![downloads](https://img.shields.io/powershellgallery/dt/PSSourcegraph.svg?label=downloads)](https://www.powershellgallery.com/packages/PSSourcegraph)
 
 ## Installation
 
 ```powershell
-Install-Module Sourcegraph
+Install-Module PSSourcegraph
 ```
 
 ## Usage example
