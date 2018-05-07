@@ -32,6 +32,6 @@ script:
 
 deploy:
   provider: script
-  script: pwsh -c 'Publish-Module -Path . -NuGetApiKey'
+  script: pwsh -c 'Publish-Module -Path . -NuGetApiKey $NUGET_API_KEY'
   on:
     tags: true
