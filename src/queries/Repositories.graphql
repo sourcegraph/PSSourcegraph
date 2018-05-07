@@ -1,0 +1,11 @@
+query GetRepos {
+    repositories {
+        totalCount
+        nodes {
+            enabled
+            name
+            description
+            id
+        }
+    }
+}
