@@ -3,19 +3,23 @@ language: csharp
 dotnet: '2.0.0'
 mono: none
 
-cache:
-  directories:
-    - $HOME/Library/Caches/Homebrew
+script:
+  - pwsh -c 'Import-Module ./PSSourcegraph.psd1'
 
-matrix:
+jobs:
   include:
-    - os: osx
+    - stage: test
+      os: osx
       osx_image: xcode9.1
+      cache:
+        directories:
+          - $HOME/Library/Caches/Homebrew
       before_install:
         - brew update
         - brew tap caskroom/cask
         - brew cask install powershell
-    - os: linux
+    - stage: test
+      os: linux
       dist: trusty
       # VM-based builds turned out to be faster
       sudo: required
@@ -26,12 +30,6 @@ matrix:
               key_url: https://packages.microsoft.com/keys/microsoft.asc
           packages:
             - powershell
-
-script:
-  - pwsh -c 'Import-Module ./PSSourcegraph.psd1'
-
-deploy:
-  provider: script
-  script: pwsh -c 'Publish-Module -Path . -NuGetApiKey $NUGET_API_KEY'
-  on:
-    tags: true
+    - stage: release
+      script: pwsh -c 'Publish-Module -Path . -NuGetApiKey $NUGET_API_KEY'
+      if: tag ~= ^v AND fork = false
