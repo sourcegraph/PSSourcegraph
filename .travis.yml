@@ -9,16 +9,6 @@ script:
 jobs:
   include:
     - stage: test
-      os: osx
-      osx_image: xcode9.1
-      cache:
-        directories:
-          - $HOME/Library/Caches/Homebrew
-      before_install:
-        - brew update
-        - brew tap caskroom/cask
-        - brew cask install powershell
-    - stage: test
       os: linux
       dist: trusty
       # VM-based builds turned out to be faster
