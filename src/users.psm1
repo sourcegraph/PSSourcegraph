@@ -76,7 +76,7 @@ function Get-SourcegraphUser {
         }
         $data = Invoke-SourcegraphApiRequest -Query $UsersQuery -Variables $variables -Endpoint $Endpoint -Token $Token
         if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
-            $PSCmdlet.PagingParameters.NewTotalCount($data.totalCount, 1)
+            $PSCmdlet.PagingParameters.NewTotalCount($data.users.totalCount, 1)
         }
         $data.users.nodes
     }
