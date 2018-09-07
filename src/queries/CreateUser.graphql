@@ -1,0 +1,5 @@
+mutation CreateUser($username: String!, $email: String!) {
+    createUser(username: $username, email: $email) {
+        resetPasswordURL
+    }
+}

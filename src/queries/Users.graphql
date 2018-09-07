@@ -1,0 +1,8 @@
+query Users($first: Int, $query: String, $tag: String) {
+    users(first: $first, query: $query, tag: $tag) {
+        totalCount
+        nodes {
+            ...UserFields
+        }
+    }
+}

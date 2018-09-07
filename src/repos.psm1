@@ -1,7 +1,7 @@
 
 $repositoriesQuery = Get-Content -Raw "$PSScriptRoot/queries/Repositories.graphql"
 
-function Get-SourcegraphRepositories {
+function Get-SourcegraphRepository {
     <#
     .SYNOPSIS
         List all repositories known to a Sourcegraph instance
@@ -21,8 +21,10 @@ function Get-SourcegraphRepositories {
     )
 
     $data = Invoke-SourcegraphApiRequest -Query $repositoriesQuery -Endpoint $Endpoint -Token $Token
+    if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
+        $PSCmdlet.PagingParameters.NewTotalCount($data.repositories.totalCount, 1)
+    }
     $data.repositories.nodes
-    $PSCmdlet.PagingParameters.NewTotalCount($data.repositories.totalCount, 1)
 }
 Set-Alias Get-SrcRepositories Get-SourcegraphRepositories
 

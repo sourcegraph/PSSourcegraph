@@ -49,19 +49,17 @@ function Invoke-SourcegraphApiRequest {
         variables = $Variables
     }
     if ($PSCmdlet.ShouldProcess("Invoke", "Invoke Sourcegraph API request?", "Sourcegraph API request")) {
-        $response = Invoke-WebRequest `
+        $parsed = Invoke-RestMethod `
             -Method Post `
             -Uri $uri `
             -Header $header `
             -ContentType 'application/json' `
-            -Body ($body | ConvertTo-Json) `
-            -ErrorAction Stop
-        $parsed = $response.Content | ConvertFrom-Json
+            -Body ($body | ConvertTo-Json)
         if ($parsed.errors) {
             # Write GraphQL errors to error pipeline
             foreach ($err in $parsed.errors) {
                 # Convert error to Exception
-                $exception = [System.Exception]::new($err.message)
+                $exception = [Exception]::new($err.message)
                 # Copy over metadata
                 foreach ($prop in $err.PSObject.Properties) {
                     if ($prop.Name -eq 'message') {
