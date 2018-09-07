@@ -46,7 +46,7 @@ function Get-SourcegraphUser {
     .SYNOPSIS
         Get users on a Sourcegraph instance
     .PARAMETER Username
-        The username for the new user
+        Get only the user with the given username
     .PARAMETER Endpoint
         The endpoint URL of the Sourcegraph instance (default https://sourcegraph.com)
     .PARAMETER Token
