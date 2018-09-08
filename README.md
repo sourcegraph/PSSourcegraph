@@ -1,4 +1,3 @@
-
 # Sourcegraph for PowerShell
 
 [![powershellgallery](https://img.shields.io/powershellgallery/v/PSSourcegraph.svg)](https://www.powershellgallery.com/packages/PSSourcegraph)
@@ -14,18 +13,20 @@ Install-Module PSSourcegraph
 ## Usage example
 
 ```powershell
-Invoke-SourcegraphApiRequest -Variables @{query = 'repogroup:sample test'} -Query @'
-    query($query: String!) {
-        search(query: $query) {
-            results {
-                resultCount
-            }
-        }
-    }
-'@
+Search-Sourcegraph 'type:file repogroup:sample error'
 ```
 
-See `Get-Help Invoke-SourcegraphApiRequest` for detailed documentation.
+## Included
+
+- `Search-Sourcegraph`
+- `Disable-SourcegraphRepository`
+- `Enable-SourcegraphRepository`
+- `Get-SourcegraphRepository`
+- `Get-SourcegraphUser`
+- `New-SourcegraphUser`
+- `Invoke-SourcegraphApiRequest`
+
+Missing something? Please file an issue!
 
 ## Configuration
 
