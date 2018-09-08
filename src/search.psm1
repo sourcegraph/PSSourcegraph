@@ -50,11 +50,16 @@ function Search-Sourcegraph {
             if ($result.LimitHit) {
                 Write-Warning "File limit hit"
             }
+            # Instead of nesting LineMatches and Symbols in FileMatches, we flat out the list and let PowerShell formatting do the grouping
             foreach ($lineMatch in $result.LineMatches) {
                 $lineMatch.PSObject.TypeNames.Insert(0, 'Sourcegraph.LineMatch')
-                # Instead of nesting LineMatches in FileMatches, we flat out the list and let PowerShell formatting do the grouping
                 Add-Member -InputObject $lineMatch -MemberType NoteProperty -Name 'FileMatch' -Value $result
                 $lineMatch
+            }
+            foreach ($symbol in $result.Symbols) {
+                $symbol.PSObject.TypeNames.Insert(0, 'Sourcegraph.Symbol')
+                Add-Member -InputObject $symbol -MemberType NoteProperty -Name 'FileMatch' -Value $result
+                $symbol
             }
         } else {
             $result

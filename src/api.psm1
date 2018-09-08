@@ -35,7 +35,6 @@ function Invoke-SourcegraphApiRequest {
 
         [string] $Endpoint = 'https://sourcegraph.com',
 
-        [ValidateNotNullOrEmpty()]
         [string] $Token
     )
 

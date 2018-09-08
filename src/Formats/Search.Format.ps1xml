@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+    <Controls>
+        <Control>
+            <Name>SourcegraphFileMatchGroupingFormat</Name>
+            <CustomControl>
+                <CustomEntries>
+                    <CustomEntry>
+                        <CustomItem>
+                            <Frame>
+                                <CustomItem>
+                                    <ExpressionBinding>
+                                        <ScriptBlock>
+                                            <![CDATA[
+                                                try {
+                                                    $rev = if ($_.FileMatch.File.Commit.Oid) {
+                                                        $commitUrl = "$($_.FileMatch.Repository.Url)@$($_.FileMatch.File.Commit.Oid)"
+                                                        # AbbreviatedOid causes panics if queried for search results
+                                                        # TODO figure out why the link does not work (but works with Out-String)
+                                                        " @ `e]8;;$commitUrl`a`e[02m$($_.FileMatch.File.Commit.Oid.Substring(0, 7))`e[0m`e]8;;`a"
+                                                    } else {
+                                                        ""
+                                                    }
+                                                    "`e]8;;$($_.FileMatch.Repository.Url)`a`e[036m$($_.FileMatch.Repository.Name)`e[0m`e]8;;`a$rev > `e]8;;$($_.FileMatch.File.Url)`a`e[035m$($_.FileMatch.File.Path)`e[0m`e]8;;`a"
+                                                } catch {
+                                                    $_ | Out-String | Write-Warning
+                                                }
+                                            ]]>
+                                        </ScriptBlock>
+                                    </ExpressionBinding>
+                                    <NewLine />
+                                    <ExpressionBinding>
+                                        <ScriptBlock><![CDATA[ "`e[3mLimit hit`e[0m" ]]></ScriptBlock>
+                                        <ItemSelectionCondition>
+                                            <ScriptBlock>
+                                                <![CDATA[
+                                                    $_.FileMatch.LimitHit
+                                                ]]>
+                                            </ScriptBlock>
+                                        </ItemSelectionCondition>
+                                    </ExpressionBinding>
+                                </CustomItem>
+                            </Frame>
+                        </CustomItem>
+                    </CustomEntry>
+                </CustomEntries>
+            </CustomControl>
+        </Control>
+    </Controls>
+    <ViewDefinitions>
+        <View>
+            <Name>SourcegraphLineMatch</Name>
+            <ViewSelectedBy>
+                <TypeName>Sourcegraph.LineMatch</TypeName>
+            </ViewSelectedBy>
+            <GroupBy>
+                <ScriptBlock>
+                    <![CDATA[
+                        $_.FileMatch.Repository.Name + $_.FileMatch.File.Commit.Oid + $_.FileMatch.File.Path
+                    ]]>
+                </ScriptBlock>
+                <CustomControlName>SourcegraphFileMatchGroupingFormat</CustomControlName>
+            </GroupBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Label>Line</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Preview</Label>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <!--
+                                0-based data, 1-based display
+                                We cannot add a hyperlink here, because PowerShell would count
+                                the characters of the hyperlink sequence to the column width
+                                -->
+                                <ScriptBlock>
+                                    <![CDATA[
+                                        "`e[37;1m$($_.LineNumber + 1)`e[0m"
+                                    ]]>
+                                </ScriptBlock>
+                                <Alignment>Right</Alignment>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>
+                                    <![CDATA[
+                                        # TODO figure out what's wrong with github.com/sourcegraph/src > .gitignore "error"
+                                        try {
+                                            # Highlight match ranges
+                                            $preview = $_.Preview
+                                            $out = ""
+                                            $start = 0
+                                            foreach ($offsetAndLength in $_.OffsetAndLengths) {
+                                                $offset = $offsetAndLength[0]
+                                                $length = $offsetAndLength[1]
+                                                $out += $preview.Substring($start, $offset - $start) + "`e[43m`e[30m" + $preview.Substring($offset, $length) + "`e[0m"
+                                                $start += $offset + $length
+                                            }
+                                            # Add rest
+                                            if ($preview.Length -gt $start) {
+                                                $out += $preview.Substring($start)
+                                            }
+                                            $out
+                                        } catch {
+                                            Write-Warning "Error highlighting matches: " + ($_ | Out-String)
+                                            $_.Preview
+                                        }
+                                    ]]>
+                                </ScriptBlock>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>SourcegraphSymbol</Name>
+            <ViewSelectedBy>
+                <TypeName>Sourcegraph.Symbol</TypeName>
+            </ViewSelectedBy>
+            <GroupBy>
+                <ScriptBlock>
+                    <![CDATA[
+                        $_.FileMatch.Repository.Name + $_.FileMatch.File.Commit.Oid + $_.FileMatch.File.Name
+                    ]]>
+                </ScriptBlock>
+                <CustomControlName>SourcegraphFileMatchGroupingFormat</CustomControlName>
+            </GroupBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Label>Kind</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Name</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>ContainerName</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Language</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Range</Label>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <ScriptBlock>
+                                    <![CDATA[
+                                        $color = switch ($_.Kind) {
+                                            'CONSTANT'      { "`e[38;5;57m" }
+                                            'METHOD'        { "`e[35m" }
+                                            'CONSTRUCTOR'   { "`e[35m" }
+                                            'FUNCTION'      { "`e[35m" }
+                                            'CLASS'         { "`e[38;5;220;m" }
+                                            'KEY'           { "`e[38;5;220;m" }
+                                            'STRUCT'        { "`e[38;5;220;m" }
+                                            'TYPEPAREMETER' { "`e[38;5;38;m" }
+                                            'VARIABLE'      { "`e[38;5;38;m" }
+                                            'PROPERTY'      { "`e[38;5;110;m" }
+                                            'FIELD'         { "`e[38;5;110;m" }
+                                            'PACKAGE'       { "`e[38;5;208;m" }
+                                            'NAMESPACE'     { "`e[38;5;50;m" }
+                                            'STRING'        { "`e[38;5;198m" }
+                                            'INTERFACE'     { "`e[32m" }
+                                            'MODULE'        { "`e[38;5;93;m" }
+                                            'EVENT'         { "`e[31m" }
+                                            default         { '' }
+                                        }
+                                        $color + $_.Kind + "`e[0m"
+                                    ]]>
+                                </ScriptBlock>
+                            </TableColumnItem>
+                            <!-- <TableColumnItem>
+                                <ScriptBlock>
+                                    <![CDATA[
+                                        switch ($_.Kind) {
+                                            'ARRAY'         { return '⟦⟧' }
+                                            'BOOLEAN'       { return '💡' }
+                                            'CLASS'         { return '🔶' }
+                                            'CONSTANT'      { return "`e[034;1m𝛑`e[0m"  }
+                                            'CONSTRUCTOR'   { return '🏗' }
+                                            'ENUM'          { return '🔢' }
+                                            'ENUMMEMBER'    { return '🔢' }
+                                            'EVENT'         { return '⏰' }
+                                            'FIELD'         { return '🏷' }
+                                            'FILE'          { return '📄' }
+                                            'FUNCTION'      { return "`e[035;1m𝑓`e[0m" }
+                                            'INTERFACE'     { return '🔗' }
+                                            'KEY'           { return '🔑' }
+                                            'METHOD'        { return '🔹' }
+                                            'MODULE'        { return '❴❵' }
+                                            'NAMESPACE'     { return '🌐' }
+                                            'NULL'          { return '0️⃣' }
+                                            'NUMBER'        { return '#️⃣' }
+                                            'OBJECT'        { return '⏹' }
+                                            'OPERATOR'      { return '*️⃣' }
+                                            'PACKAGE'       { return '📦' }
+                                            'PROPERTY'      { return '🔧' }
+                                            'STRUCT'        { return '🏛' }
+                                            'TYPEPAREMETER' { return '🗳' }
+                                            'UNKOWN'        { return '❓' }
+                                            'VARIABLE'      { return '🗳' }
+                                            default         { return '' }
+                                        }
+                                    ]]>
+                                </ScriptBlock>
+                                <Alignment>Center</Alignment>
+                            </TableColumnItem> -->
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>
+                                    <![CDATA[
+                                        "`e[02m$($_.ContainerName)`e[0m"
+                                    ]]>
+                                </ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Language</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>
+                                    <![CDATA[
+                                        try {
+                                            $range = $_.Location.Range
+                                            "$($range.Start.Line + 1):$($range.Start.Character + 1)-$($range.End.Line + 1):$($range.End.Character + 1)"
+                                        } catch {
+                                            $_ | Out-String | Write-Warning
+                                        }
+                                    ]]>
+                                </ScriptBlock>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>SourcegraphFileMatch</Name>
+            <ViewSelectedBy>
+                <TypeName>Sourcegraph.FileMatch</TypeName>
+            </ViewSelectedBy>
+            <ListControl>
+                <ListEntries>
+                    <ListEntry>
+                        <ListItems>
+                            <ListItem>
+                                <Label>Repository</Label>
+                                <ScriptBlock>$_.Repository.Name</ScriptBlock>
+                            </ListItem>
+                            <ListItem>
+                                <Label>File</Label>
+                                <ScriptBlock>$_.File.Path</ScriptBlock>
+                            </ListItem>
+                            <ListItem>
+                                <Label>Commit</Label>
+                                <ScriptBlock>$_.File.Commit.Oid</ScriptBlock>
+                            </ListItem>
+                            <ListItem>
+                                <Label>Symbols</Label>
+                                <ScriptBlock>"@( ... $($_.Symbols.Count) matches ... )"</ScriptBlock>
+                            </ListItem>
+                            <ListItem>
+                                <Label>LineMatches</Label>
+                                <ScriptBlock>"@( ... $($_.LineMatches.Count) matches ... )"</ScriptBlock>
+                            </ListItem>
+                        </ListItems>
+                    </ListEntry>
+                </ListEntries>
+            </ListControl>
+        </View>
+    </ViewDefinitions>
+</Configuration>

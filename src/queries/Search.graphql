@@ -13,17 +13,33 @@ fragment FileMatchFields on FileMatch {
         }
     }
     symbols {
+        kind
         name
         containerName
-        kind
         language
+        location {
+            resource {
+                path
+            }
+            range {
+                start {
+                    line
+                    character
+                }
+                end {
+                    line
+                    character
+                }
+            }
+        }
     }
     lineMatches {
-        preview
         lineNumber
+        preview
         offsetAndLengths
         limitHit
     }
+    limitHit
 }
 
 fragment CommitSearchResultFields on CommitSearchResult {
