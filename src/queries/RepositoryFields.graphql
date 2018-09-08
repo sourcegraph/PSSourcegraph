@@ -1,0 +1,10 @@
+fragment RepositoryFields on Repository {
+    enabled
+    name
+    description
+    id
+    externalURLs {
+        serviceType
+        url
+    }
+}

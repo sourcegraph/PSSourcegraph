@@ -1,6 +1,6 @@
 
-$repositoriesQuery = Get-Content -Raw "$PSScriptRoot/queries/Repositories.graphql"
-
+$repositoryFields = Get-Content -Raw "$PSScriptRoot/queries/RepositoryFields.graphql"
+$repositoriesQuery = (Get-Content -Raw "$PSScriptRoot/queries/Repositories.graphql") + $repositoryFields
 function Get-SourcegraphRepository {
     <#
     .SYNOPSIS

@@ -1,0 +1,91 @@
+fragment FileMatchFields on FileMatch {
+    repository {
+        name
+        url
+    }
+    file {
+        name
+        path
+        url
+        commit {
+            # This commit has many fields not set, e.g. abbreviatedOID causes panics
+            oid
+        }
+    }
+    symbols {
+        name
+        containerName
+        kind
+        language
+    }
+    lineMatches {
+        preview
+        lineNumber
+        offsetAndLengths
+        limitHit
+    }
+}
+
+fragment CommitSearchResultFields on CommitSearchResult {
+    messagePreview {
+        value
+        highlights {
+            line
+            character
+            length
+        }
+    }
+    diffPreview {
+        value
+        highlights {
+            line
+            character
+            length
+        }
+    }
+    commit {
+        repository {
+            name
+        }
+        oid
+        url
+        subject
+        author {
+            date
+            person {
+                displayName
+            }
+        }
+    }
+}
+
+query($query: String!) {
+    search(query: $query) {
+        results {
+            results {
+                __typename
+                ... on FileMatch {
+                    ...FileMatchFields
+                }
+                ... on CommitSearchResult {
+                    ...CommitSearchResultFields
+                }
+                ... on Repository {
+                    ...RepositoryFields
+                }
+            }
+            limitHit
+            cloning {
+                ...RepositoryFields
+            }
+            missing {
+                ...RepositoryFields
+            }
+            timedout {
+                ...RepositoryFields
+            }
+            resultCount
+            elapsedMilliseconds
+        }
+    }
+}

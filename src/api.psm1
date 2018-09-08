@@ -48,29 +48,27 @@ function Invoke-SourcegraphApiRequest {
         query     = $Query
         variables = $Variables
     }
-    if ($PSCmdlet.ShouldProcess("Invoke", "Invoke Sourcegraph API request?", "Sourcegraph API request")) {
-        $parsed = Invoke-RestMethod `
-            -Method Post `
-            -Uri $uri `
-            -Header $header `
-            -ContentType 'application/json' `
-            -Body ($body | ConvertTo-Json)
-        if ($parsed.errors) {
-            # Write GraphQL errors to error pipeline
-            foreach ($err in $parsed.errors) {
-                # Convert error to Exception
-                $exception = [Exception]::new($err.message)
-                # Copy over metadata
-                foreach ($prop in $err.PSObject.Properties) {
-                    if ($prop.Name -eq 'message') {
-                        continue
-                    }
-                    Add-Member -InputObject $exception -NotePropertyName ($prop.Name[0].ToString().ToUpper() + $prop.Name.Substring(1)) -NotePropertyValue $prop.Value
+    $parsed = Invoke-RestMethod `
+        -Method Post `
+        -Uri $uri `
+        -Header $header `
+        -ContentType 'application/json' `
+        -Body ($body | ConvertTo-Json)
+    if ($parsed.errors) {
+        # Write GraphQL errors to error pipeline
+        foreach ($err in $parsed.errors) {
+            # Convert error to Exception
+            $exception = [Exception]::new("$($err.message)`nAt $($err.path -join '.')")
+            # Copy over metadata
+            foreach ($prop in $err.PSObject.Properties) {
+                if ($prop.Name -eq 'message') {
+                    continue
                 }
-                Write-Error -Exception $exception
+                Add-Member -InputObject $exception -NotePropertyName ($prop.Name[0].ToString().ToUpper() + $prop.Name.Substring(1)) -NotePropertyValue $prop.Value
             }
+            Write-Error -Exception $exception
         }
-        $parsed.data
     }
+    $parsed.data
 }
 Set-Alias Invoke-SrcApiRequest Invoke-SourcegraphApiRequest

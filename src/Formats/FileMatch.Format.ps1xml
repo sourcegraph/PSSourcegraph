@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+    <ViewDefinitions>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>Sourcegraph.FileMatch</TypeName>
+            </ViewSelectedBy>
+            <ListControl>
+                <ListEntries>
+                    <ListEntry>
+                        <ListItems>
+                            <ListItem>
+                                <Label>Repository</Label>
+                                <ScriptBlock>$_.Repository.Name</ScriptBlock>
+                            </ListItem>
+                            <ListItem>
+                                <Label>File</Label>
+                                <ScriptBlock>$_.File.Path</ScriptBlock>
+                            </ListItem>
+                            <ListItem>
+                                <Label>Commit</Label>
+                                <ScriptBlock>$_.File.Commit.Oid</ScriptBlock>
+                            </ListItem>
+                            <ListItem>
+                                <Label>Symbols</Label>
+                                <ScriptBlock>"@( ... $($_.Symbols.Count) matches ... )"</ScriptBlock>
+                            </ListItem>
+                            <ListItem>
+                                <Label>LineMatches</Label>
+                                <ScriptBlock>"@( ... $($_.LineMatches.Count) matches ... )"</ScriptBlock>
+                            </ListItem>
+                        </ListItems>
+                    </ListEntry>
+                </ListEntries>
+            </ListControl>
+        </View>
+    </ViewDefinitions>
+</Configuration>

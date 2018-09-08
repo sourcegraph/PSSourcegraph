@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+    <Controls>
+        <Control>
+            <Name>SourcegraphLineMatchGroupingFormat</Name>
+            <CustomControl>
+                <CustomEntries>
+                    <CustomEntry>
+                        <CustomItem>
+                            <Frame>
+                                <CustomItem>
+                                    <ExpressionBinding>
+                                        <ScriptBlock>
+                                            <![CDATA[
+                                                $rev = if ($_.FileMatch.File.Commit.Oid) {
+                                                    $commitUrl = "$($_.FileMatch.Repository.Url)@$($_.FileMatch.File.Commit.Oid)"
+                                                    # AbbreviatedOid causes panics if queried for search results
+                                                    # TODO figure out why the link does not work (but works with Out-String)
+                                                    " @ `e]8;;$commitUrl`a`e[02m$($_.FileMatch.File.Commit.Oid.Substring(0, 7))`e[0m`e]8;;`a"
+                                                } else {
+                                                    ""
+                                                }
+                                                "`e]8;;$($_.FileMatch.Repository.Url)`a`e[036m$($_.FileMatch.Repository.Name)`e[0m`e]8;;`a$rev > `e]8;;$($_.FileMatch.File.Url)`a`e[035m$($_.FileMatch.File.Path)`e[0m`e]8;;`a"
+                                            ]]>
+                                        </ScriptBlock>
+                                    </ExpressionBinding>
+                                    <NewLine />
+                                    <ExpressionBinding>
+                                        <ScriptBlock>"Limit hit"</ScriptBlock>
+                                        <ItemSelectionCondition>
+                                            <ScriptBlock>
+                                                <![CDATA[
+                                                    $_.FileMatch.LimitHit
+                                                ]]>
+                                            </ScriptBlock>
+                                        </ItemSelectionCondition>
+                                    </ExpressionBinding>
+                                </CustomItem>
+                            </Frame>
+                        </CustomItem>
+                    </CustomEntry>
+                </CustomEntries>
+            </CustomControl>
+        </Control>
+    </Controls>
+    <ViewDefinitions>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>Sourcegraph.LineMatch</TypeName>
+            </ViewSelectedBy>
+            <GroupBy>
+                <ScriptBlock>
+                    <![CDATA[
+                        $_.FileMatch.Repository.Name + $_.FileMatch.File.Commit.Oid + $_.FileMatch.File.Name
+                    ]]>
+                </ScriptBlock>
+                <CustomControlName>SourcegraphLineMatchGroupingFormat</CustomControlName>
+            </GroupBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Label>Line</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Preview</Label>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <!--
+                                0-based data, 1-based display
+                                We cannot add a hyperlink here, because PowerShell would count
+                                the characters of the hyperlink sequence to the column width
+                                -->
+                                <ScriptBlock>
+                                    <![CDATA[
+                                        "`e[37;1m$($_.LineNumber + 1)`e[0m"
+                                    ]]>
+                                </ScriptBlock>
+                                <Alignment>Right</Alignment>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>
+                                    <![CDATA[
+                                        # TODO figure out what's wrong with github.com/sourcegraph/src > .gitignore "error"
+                                        try {
+                                            # Highlight match ranges
+                                            $preview = $_.Preview
+                                            $out = ""
+                                            $start = 0
+                                            foreach ($offsetAndLength in $_.OffsetAndLengths) {
+                                                $offset = $offsetAndLength[0]
+                                                $length = $offsetAndLength[1]
+                                                $out += $preview.Substring($start, $offset - $start) + "`e[43m`e[30m" + $preview.Substring($offset, $length) + "`e[0m"
+                                                $start += $offset + $length
+                                            }
+                                            # Add rest
+                                            if ($preview.Length -gt $start) {
+                                                $out += $preview.Substring($start)
+                                            }
+                                            $out
+                                        } catch {
+                                            Write-Warning "Error highlighting matches: " + ($_ | Out-String)
+                                            $_.Preview
+                                        }
+                                    ]]>
+                                </ScriptBlock>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+    </ViewDefinitions>
+</Configuration>
