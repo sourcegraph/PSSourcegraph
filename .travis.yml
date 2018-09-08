@@ -1,7 +1,15 @@
-
 language: csharp
 dotnet: '2.0.0'
 mono: none
+
+dist: trusty
+addons:
+  apt:
+    sources:
+      - sourceline: deb [arch=amd64] https://packages.microsoft.com/ubuntu/14.04/prod trusty main
+        key_url: https://packages.microsoft.com/keys/microsoft.asc
+    packages:
+      - powershell
 
 script:
   - pwsh -c 'Import-Module ./PSSourcegraph.psd1'
@@ -9,17 +17,6 @@ script:
 jobs:
   include:
     - stage: test
-      os: linux
-      dist: trusty
-      # VM-based builds turned out to be faster
-      sudo: required
-      addons:
-        apt:
-          sources:
-            - sourceline: deb [arch=amd64] https://packages.microsoft.com/ubuntu/14.04/prod trusty main
-              key_url: https://packages.microsoft.com/keys/microsoft.asc
-          packages:
-            - powershell
     - stage: release
       script: pwsh -c 'Publish-Module -Path . -NuGetApiKey $NUGET_API_KEY'
       if: tag =~ ^v AND fork = false
