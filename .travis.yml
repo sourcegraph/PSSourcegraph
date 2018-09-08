@@ -18,5 +18,5 @@ jobs:
   include:
     - stage: test
     - stage: release
-      script: pwsh -c 'Publish-Module -Path . -NuGetApiKey $NUGET_API_KEY'
+      script: pwsh -c 'Publish-Module -Path . -NuGetApiKey $env:NUGET_API_KEY'
       if: tag =~ ^v AND fork = false
