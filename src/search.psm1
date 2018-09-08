@@ -47,9 +47,7 @@ function Search-Sourcegraph {
             # Make URL absolute
             $result.File.Url = [Uri]::new($Endpoint, $result.File.Url)
             $result.Repository.Url = [Uri]::new($Endpoint, $result.Repository.Url)
-            if ($result.LimitHit) {
-                Write-Warning "File limit hit"
-            }
+
             # Instead of nesting LineMatches and Symbols in FileMatches, we flat out the list and let PowerShell formatting do the grouping
             foreach ($lineMatch in $result.LineMatches) {
                 $lineMatch.PSObject.TypeNames.Insert(0, 'Sourcegraph.LineMatch')
