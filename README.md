@@ -4,16 +4,18 @@
 [![downloads](https://img.shields.io/powershellgallery/dt/PSSourcegraph.svg?label=downloads)](https://www.powershellgallery.com/packages/PSSourcegraph)
 [![build](https://travis-ci.org/sourcegraph/PSSourcegraph.svg?branch=master)](https://travis-ci.org/sourcegraph/PSSourcegraph)
 
+Search Sourcegraph from PowerShell
+
+![Text search output formatting](./images/textsearch.png)
+
+![Symbol search output formatting](./images/symbolsearch.png)
+
+Pretty formatting is supported for file and symbol results (`type:file` and `type:symbol`)
+
 ## Installation
 
 ```powershell
 Install-Module PSSourcegraph
-```
-
-## Usage example
-
-```powershell
-Search-Sourcegraph 'type:file repogroup:sample error'
 ```
 
 ## Included
