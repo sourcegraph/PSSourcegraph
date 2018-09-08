@@ -16,6 +16,23 @@
                                                     $rev = if ($_.FileMatch.File.Commit.Oid) {
                                                         $commitUrl = "$($_.FileMatch.Repository.Url)@$($_.FileMatch.File.Commit.Oid)"
                                                         # AbbreviatedOid causes panics if queried for search results
+                                                        "@`e[02m$($_.FileMatch.File.Commit.Oid.Substring(0, 7))`e[0m"
+                                                    } else {
+                                                        ""
+                                                    }
+                                                    "`e[036m$($_.FileMatch.Repository.Name)`e[0m$rev > `e[035m$($_.FileMatch.File.Path)`e[0m"
+                                                } catch {
+                                                    $_ | Out-String | Write-Warning
+                                                }
+                                            ]]>
+                                        </ScriptBlock>
+                                        <!-- Does not work because of https://github.com/PowerShell/PowerShell/issues/7744 -->
+                                        <!-- <ScriptBlock>
+                                            <![CDATA[
+                                                try {
+                                                    $rev = if ($_.FileMatch.File.Commit.Oid) {
+                                                        $commitUrl = "$($_.FileMatch.Repository.Url)@$($_.FileMatch.File.Commit.Oid)"
+                                                        # AbbreviatedOid causes panics if queried for search results
                                                         # TODO figure out why the link does not work (but works with Out-String)
                                                         " @ `e]8;;$commitUrl`a`e[02m$($_.FileMatch.File.Commit.Oid.Substring(0, 7))`e[0m`e]8;;`a"
                                                     } else {
@@ -26,7 +43,7 @@
                                                     $_ | Out-String | Write-Warning
                                                 }
                                             ]]>
-                                        </ScriptBlock>
+                                        </ScriptBlock> -->
                                     </ExpressionBinding>
                                     <NewLine />
                                     <ExpressionBinding>
@@ -76,8 +93,7 @@
                             <TableColumnItem>
                                 <!--
                                 0-based data, 1-based display
-                                We cannot add a hyperlink here, because PowerShell would count
-                                the characters of the hyperlink sequence to the column width
+                                Cannot add hyperlink because of https://github.com/PowerShell/PowerShell/issues/7744
                                 -->
                                 <ScriptBlock>
                                     <![CDATA[
