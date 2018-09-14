@@ -10,7 +10,7 @@ Search Sourcegraph from PowerShell
 
 ![Symbol search output formatting](./images/symbolsearch.png)
 
-Pretty formatting is supported for file and symbol results (`type:file` and `type:symbol`)
+Pretty formatting is supported for text, file and symbol results (`type:file` and `type:symbol`)
 
 ## Installation
 

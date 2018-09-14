@@ -248,34 +248,48 @@
             <ViewSelectedBy>
                 <TypeName>Sourcegraph.FileMatch</TypeName>
             </ViewSelectedBy>
-            <ListControl>
-                <ListEntries>
-                    <ListEntry>
-                        <ListItems>
-                            <ListItem>
-                                <Label>Repository</Label>
-                                <ScriptBlock>$_.Repository.Name</ScriptBlock>
-                            </ListItem>
-                            <ListItem>
-                                <Label>File</Label>
-                                <ScriptBlock>$_.File.Path</ScriptBlock>
-                            </ListItem>
-                            <ListItem>
-                                <Label>Commit</Label>
-                                <ScriptBlock>$_.File.Commit.Oid</ScriptBlock>
-                            </ListItem>
-                            <ListItem>
-                                <Label>Symbols</Label>
-                                <ScriptBlock>"@( ... $($_.Symbols.Count) matches ... )"</ScriptBlock>
-                            </ListItem>
-                            <ListItem>
-                                <Label>LineMatches</Label>
-                                <ScriptBlock>"@( ... $($_.LineMatches.Count) matches ... )"</ScriptBlock>
-                            </ListItem>
-                        </ListItems>
-                    </ListEntry>
-                </ListEntries>
-            </ListControl>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Label>Repository</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Commit</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>File</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Symbols</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>LineMatches</Label>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <ScriptBlock>"`e[036m$($_.Repository.Name)`e[0m"</ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>"`e[02m$($_.File.Commit.Oid.Substring(0, 7))`e[0m"</ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>"`e[035m$($_.File.Path)`e[0m"</ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.Symbols.Count</ScriptBlock>
+                                <Alignment>Right</Alignment>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.LineMatches.Count</ScriptBlock>
+                                <Alignment>Right</Alignment>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
         </View>
     </ViewDefinitions>
 </Configuration>

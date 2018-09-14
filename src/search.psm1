@@ -48,16 +48,21 @@ function Search-Sourcegraph {
             $result.File.Url = [Uri]::new($Endpoint, $result.File.Url)
             $result.Repository.Url = [Uri]::new($Endpoint, $result.Repository.Url)
 
-            # Instead of nesting LineMatches and Symbols in FileMatches, we flat out the list and let PowerShell formatting do the grouping
-            foreach ($lineMatch in $result.LineMatches) {
-                $lineMatch.PSObject.TypeNames.Insert(0, 'Sourcegraph.LineMatch')
-                Add-Member -InputObject $lineMatch -MemberType NoteProperty -Name 'FileMatch' -Value $result
-                $lineMatch
-            }
-            foreach ($symbol in $result.Symbols) {
-                $symbol.PSObject.TypeNames.Insert(0, 'Sourcegraph.Symbol')
-                Add-Member -InputObject $symbol -MemberType NoteProperty -Name 'FileMatch' -Value $result
-                $symbol
+            if ($result.LineMatches -or $result.Symbols) {
+                # Instead of nesting LineMatches and Symbols in FileMatches, we flat out the list and let PowerShell formatting do the grouping
+                foreach ($lineMatch in $result.LineMatches) {
+                    $lineMatch.PSObject.TypeNames.Insert(0, 'Sourcegraph.LineMatch')
+                    Add-Member -InputObject $lineMatch -MemberType NoteProperty -Name 'FileMatch' -Value $result
+                    $lineMatch
+                }
+                foreach ($symbol in $result.Symbols) {
+                    $symbol.PSObject.TypeNames.Insert(0, 'Sourcegraph.Symbol')
+                    Add-Member -InputObject $symbol -MemberType NoteProperty -Name 'FileMatch' -Value $result
+                    $symbol
+                }
+            } else {
+                # The FileMatch has no line or symbol matches, which means the file name matched, so add the FileMatch itself as a result
+                $result
             }
         } else {
             $result
