@@ -37,7 +37,9 @@ function Search-Sourcegraph {
     if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
         $PSCmdlet.PagingParameters.NewTotalCount($data.search.results.resultCount, 1)
     }
-    Write-Warning "Result limit hit"
+    if ($data.search.results.limitHit) {
+        Write-Warning "Result limit hit"
+    }
 
     foreach ($result in $data.search.results.results) {
         $result.PSObject.TypeNames.Insert(0, 'Sourcegraph.' + $result.__typename)
