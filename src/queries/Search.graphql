@@ -62,6 +62,7 @@ fragment CommitSearchResultFields on CommitSearchResult {
     commit {
         repository {
             name
+            url
         }
         oid
         url
@@ -69,7 +70,13 @@ fragment CommitSearchResultFields on CommitSearchResult {
         author {
             date
             person {
+                name
+                email
                 displayName
+                user {
+                    id
+                    username
+                }
             }
         }
     }

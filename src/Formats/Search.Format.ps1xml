@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Uncomment next line and comment the following to get validation and autocompletion with https://github.com/redhat-developer/vscode-xml -->
-<!-- <Configuration xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/felixfbecker/PowerShellXSD/master/Format.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> -->
 <Configuration>
     <Controls>
         <Control>
@@ -56,6 +55,20 @@
                                     </ExpressionBinding>
                                 </CustomItem>
                             </Frame>
+                        </CustomItem>
+                    </CustomEntry>
+                </CustomEntries>
+            </CustomControl>
+        </Control>
+        <Control>
+            <Name>SourcegraphCommitSearchResultGroupingFormat</Name>
+            <CustomControl>
+                <CustomEntries>
+                    <CustomEntry>
+                        <CustomItem>
+                            <ExpressionBinding>
+                                <ScriptBlock>"`e[036m$($_.Commit.Repository.Name)`e[0m"</ScriptBlock>
+                            </ExpressionBinding>
                         </CustomItem>
                     </CustomEntry>
                 </CustomEntries>
@@ -125,6 +138,46 @@
                     </TableRowEntry>
                 </TableRowEntries>
             </TableControl>
+        </View>
+        <View>
+            <Name>SourcegraphCommitSearchResult</Name>
+            <ViewSelectedBy>
+                <TypeName>Sourcegraph.CommitSearchResult</TypeName>
+            </ViewSelectedBy>
+            <GroupBy>
+                <ScriptBlock>$_.Commit.Repository.Name</ScriptBlock>
+                <CustomControlName>SourcegraphCommitSearchResultGroupingFormat</CustomControlName>
+            </GroupBy>
+            <ListControl>
+                <ListEntries>
+                    <ListEntry>
+                        <ListItems>
+                            <ListItem>
+                                <Label>&#27;[33mCommit&#27;[0m</Label>
+                                <ScriptBlock>"`e[33m$($_.Commit.Oid)`e[0m"</ScriptBlock>
+                            </ListItem>
+                            <ListItem>
+                                <Label>Author</Label>
+                                <ScriptBlock>$_.Commit.Author.Person.DisplayName</ScriptBlock>
+                            </ListItem>
+                            <ListItem>
+                                <Label>Message</Label>
+                                <ItemSelectionCondition>
+                                    <PropertyName>MessagePreview</PropertyName>
+                                </ItemSelectionCondition>
+                                <ScriptBlock>$_.MessagePreview.Value</ScriptBlock>
+                            </ListItem>
+                            <ListItem>
+                                <Label>Diff</Label>
+                                <ItemSelectionCondition>
+                                    <PropertyName>DiffPreview</PropertyName>
+                                </ItemSelectionCondition>
+                                <ScriptBlock>$_.DiffPreview.Value</ScriptBlock>
+                            </ListItem>
+                        </ListItems>
+                    </ListEntry>
+                </ListEntries>
+            </ListControl>
         </View>
         <View>
             <Name>SourcegraphSymbol</Name>
