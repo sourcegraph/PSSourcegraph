@@ -23,7 +23,7 @@ function Invoke-SourcegraphApiRequest {
 
         Search the repogroup "sample" for the term "test"
     #>
-    [CmdletBinding(SupportsShouldProcess)]
+    [CmdletBinding()]
     param(
 
         [Parameter(Mandatory, Position = 0)]
@@ -40,8 +40,10 @@ function Invoke-SourcegraphApiRequest {
 
     $uri = New-Object System.Uri (New-Object System.Uri $Endpoint), '/.api/graphql' -ErrorAction Stop
     $header = @{
-        "Authorization" = "token $Token"
-        "User-Agent"    = "Sourcegraph for PowerShell"
+        "User-Agent" = "Sourcegraph for PowerShell"
+    }
+    if (-not [string]::IsNullOrEmpty($Token)) {
+        $header["Authorization"] = "token $Token"
     }
     $body = @{
         query     = $Query
