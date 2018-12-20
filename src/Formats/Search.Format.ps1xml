@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Uncomment next line and comment the following to get validation and autocompletion with https://github.com/redhat-developer/vscode-xml -->
 <Configuration>
     <Controls>
         <Control>

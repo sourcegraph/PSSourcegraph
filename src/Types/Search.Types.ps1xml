@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Types>
+    <Type>
+        <Name>Sourcegraph.LineMatch</Name>
+        <Members>
+            <!-- Convenience aliases to allow easier selection of common properties through Select-Object -Property -->
+            <ScriptProperty>
+                <Name>RepositoryName</Name>
+                <GetScriptBlock>$this.FileMatch.Repository.Name</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>FilePath</Name>
+                <GetScriptBlock>$this.FileMatch.File.Path</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>CommitID</Name>
+                <GetScriptBlock>$this.FileMatch.File.Commit.Oid</GetScriptBlock>
+            </ScriptProperty>
+        </Members>
+    </Type>
+</Types>
