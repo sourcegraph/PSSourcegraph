@@ -1,5 +1,43 @@
-query GetRepos {
-    repositories {
+query GetRepositories(
+    # Returns the first n repositories from the list.
+    $first: Int,
+    # Return repositories whose names match the query.
+    $query: String,
+    # Return repositories whose names are in the list.
+    $names: [String!],
+    # Include enabled repositories.
+    $enabled: Boolean = true,
+    # Include disabled repositories.
+    $disabled: Boolean = false,
+    # Include cloned repositories.
+    $cloned: Boolean = true,
+    # Include repositories that are currently being cloned.
+    $cloneInProgress: Boolean = true,
+    # Include repositories that are not yet cloned and for which cloning is not in progress.
+    $notCloned: Boolean = true,
+    # Include repositories that have a text search index.
+    $indexed: Boolean = true,
+    # Include repositories that do not have a text search index.
+    $notIndexed: Boolean = true,
+    # Sort field.
+    $orderBy: RepositoryOrderBy = REPOSITORY_NAME,
+    # Sort direction.
+    $descending: Boolean = false
+) {
+    repositories(
+        first: $first,
+        query: $query,
+        names: $names,
+        enabled: $enabled,
+        disabled: $disabled,
+        cloned: $cloned,
+        cloneInProgress: $cloneInProgress,
+        notCloned: $notCloned,
+        indexed: $indexed,
+        notIndexed: $notIndexed,
+        orderBy: $orderBy,
+        descending: $descending
+    ) {
         totalCount
         nodes {
             ...RepositoryFields

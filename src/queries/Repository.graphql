@@ -1,0 +1,11 @@
+query GetRepository(
+    $id: String,
+    $cloneUrl: String
+) {
+    repository(
+        id: $id,
+        cloneURL: $cloneUrl
+    ) {
+        ...RepositoryFields
+    }
+}
