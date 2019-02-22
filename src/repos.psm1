@@ -55,12 +55,17 @@ function Get-SourcegraphRepository {
                 $PSCmdlet.PagingParameters.NewTotalCount($count, 1)
             }
         } else {
+            $first = if ($PSCmdlet.PagingParameters.First -eq [uint64]::MaxValue) {
+                $null
+            } else {
+                $PSCmdlet.PagingParameters.Skip + $PSCmdlet.PagingParameters.First
+            }
             $vars = @{
-                first      = $PSCmdlet.PagingParameters.Skip + $PSCmdlet.PagingParameters.First
+                first      = $first
                 query      = $Query
                 names      = $Name
                 orderBy    = $SortBy
-                descending = $Descending
+                descending = [bool]$Descending
             }
             $data = Invoke-SourcegraphApiRequest -Query $repositoriesQuery -Variables $vars -Endpoint $Endpoint -Token $Token
             if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
