@@ -38,7 +38,7 @@ function Invoke-SourcegraphApiRequest {
         [string] $Token
     )
 
-    $uri = New-Object System.Uri (New-Object System.Uri $Endpoint), '/.api/graphql' -ErrorAction Stop
+    $uri = [Uri]::new([Uri]::new($Endpoint), '/.api/graphql')
     $header = @{
         "User-Agent" = "Sourcegraph for PowerShell"
     }
