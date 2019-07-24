@@ -20,7 +20,7 @@ Install-Module PSSourcegraph
 
 ## Included
 
-- `Search-Sourcegraph`
+- `Search-Sourcegraph` with autocompletion
 - `Disable-SourcegraphRepository`
 - `Enable-SourcegraphRepository`
 - `Get-SourcegraphRepository`
