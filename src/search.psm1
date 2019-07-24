@@ -1,6 +1,8 @@
 
 $RepositoryFields = Get-Content -Raw "$PSScriptRoot/queries/RepositoryFields.graphql"
 $SearchQuery = (Get-Content -Raw "$PSScriptRoot/queries/Search.graphql") + $RepositoryFields
+$SuggestionsQuery = (Get-Content -Raw "$PSScriptRoot/queries/Suggestions.graphql")
+
 function Search-Sourcegraph {
     <#
     .SYNOPSIS
@@ -72,3 +74,69 @@ function Search-Sourcegraph {
     }
 }
 Set-Alias Search-Src Search-Sourcegraph
+
+function Get-SourcegraphSearchSuggestions {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [string] $Query,
+
+        [Uri] $Endpoint = 'https://sourcegraph.com',
+        [string] $Token
+    )
+
+    process {
+        $vars = @{
+            query = $Query
+            first = 10
+        }
+        Invoke-SourcegraphApiRequest -Query $SuggestionsQuery -Variables $vars -Endpoint $Endpoint -Token $Token |
+            ForEach-Object { $_.search.suggestions }
+    }
+}
+
+# Merges two potentially overlapping strings
+function Merge-Strings([string] $a, [string] $b) {
+    for ($i = $b.Length; $i -gt 0; $i--) {
+        if ($a.EndsWith($b.Substring(0, $i))) {
+            return $a.Substring(0, $a.Length - $i) + $b
+        }
+    }
+    # replace last word
+    return ($a -replace "\b\S*$", "") + $b
+}
+
+Register-ArgumentCompleter -CommandName Search-Sourcegraph -ParameterName Query -ScriptBlock {
+    [CmdletBinding()]
+    param([string]$command, [string]$parameter, [string]$wordToComplete, [CommandAst]$commandAst, [Hashtable]$params)
+
+    $suggestionParams = @{}
+    if ($params.ContainsKey('Token')) {
+        $suggestionParams.Token = $params.Token
+    }
+    if ($params.ContainsKey('Endpoint')) {
+        $suggestionParams.Endpoint = $params.Endpoint
+    }
+
+    Get-SourcegraphSearchSuggestions @suggestionParams -Query $wordToComplete.Trim(@("'", '"')) |
+        ForEach-Object {
+            $suggestion = $_
+            $insertText, $tooltip = switch ($suggestion.__typename) {
+                'Repository' {
+                    'repo:' + $suggestion.Name
+                    "Repository $($suggestion.Name)"
+                }
+                'File' {
+                    'file:' + $suggestion.Path
+                    "File $($suggestion.Name)"
+                }
+                'Symbol' {
+                    $suggestion.Name
+                    $kind = $suggestion.Kind[0] + $suggestion.Kind.Substring(1).ToLower()
+                    "$kind symbol $($suggestion.Name)`n$($suggestion.Location.Resource.Path)"
+                }
+            }
+            $replaceText = Merge-Strings $wordToComplete.TrimEnd(@('"', "'")) $insertText
+            [CompletionResult]::new($replaceText, $suggestion.Name, [CompletionResultType]::ParameterValue, $tooltip)
+        }
+}
