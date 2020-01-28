@@ -1,5 +1,0 @@
-mutation SetRepositoryEnabled($repo: ID!, $enabled: Boolean!) {
-    setRepositoryEnabled(repository: $repo, enabled: $enabled) {
-        alwaysNil
-    }
-}
