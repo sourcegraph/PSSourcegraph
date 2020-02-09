@@ -11,3 +11,5 @@ addons:
 
 script:
   - pwsh -c 'Import-Module ./PSSourcegraph.psd1'
+
+if: tag IS blank
