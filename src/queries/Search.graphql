@@ -82,8 +82,8 @@ fragment CommitSearchResultFields on CommitSearchResult {
     }
 }
 
-query($query: String!) {
-    search(query: $query) {
+query Search($query: String!, $patternType: SearchPatternType) {
+    search(query: $query, version: V2, patternType: $patternType) {
         results {
             results {
                 __typename

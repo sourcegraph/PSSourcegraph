@@ -7,88 +7,129 @@ function Search-Sourcegraph {
     <#
     .SYNOPSIS
         Get users on a Sourcegraph instance
-    .PARAMETER Username
-        Get only the user with the given username
+    .PARAMETER Query
+        The search query.
+    .PARAMETER CaseSensitive
+        Match the query case-sensitive. Only for regexp and literal search.
+    .PARAMETER Structural
+        Interpret the query as a structural search query.
+    .PARAMETER RegularExpression
+        Interpret the query as a regular expression.
     .PARAMETER Endpoint
         The endpoint URL of the Sourcegraph instance (default https://sourcegraph.com)
     .PARAMETER Token
         The authentication token (if needed). Go to the settings page on Sourcegraph to generate one.
     #>
-    [CmdletBinding(SupportsPaging)]
+    [CmdletBinding(SupportsPaging, DefaultParameterSetName = 'literal')]
     param(
         [Parameter(Mandatory, Position = 0)]
         [string] $Query,
 
-        [Uri] $Endpoint = 'https://sourcegraph.com',
-        [string] $Token
-    )
+        [Parameter(ParameterSetName = 'regexp')]
+        [Parameter(ParameterSetName = 'literal')]
+        [switch] $CaseSensitive,
 
-    $data = Invoke-SourcegraphApiRequest -Query $SearchQuery -Variables @{ query = $Query } -Endpoint $Endpoint -Token $Token
-    if ($data.search.results.cloning.Count -gt 0) {
-        Write-Warning "Cloning:"
-        $data.search.results.cloning.name | Write-Warning
-    }
-    if ($data.search.results.missing.Count -gt 0) {
-        Write-Warning "Missing:"
-        $data.search.results.missing.name | Write-Warning
-    }
-    if ($data.search.results.timedout.Count -gt 0) {
-        Write-Warning "Timed out:"
-        $data.search.results.timedout.name | Write-Warning
-    }
-    if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
-        $PSCmdlet.PagingParameters.NewTotalCount($data.search.results.resultCount, 1)
-    }
-    if ($data.search.results.limitHit) {
-        Write-Warning "Result limit hit"
-    }
+        [Parameter(ParameterSetName = 'regexp', Mandatory)]
+        [Alias('Regexp')]
+        [switch] $RegularExpression,
 
-    foreach ($result in $data.search.results.results) {
-        $result.PSObject.TypeNames.Insert(0, 'Sourcegraph.' + $result.__typename)
-        # Make the metadata accessible from the match objects
-        Add-Member -InputObject $result -MemberType NoteProperty -Name 'SearchResults' -Value $data.search.results
-        if ($result.__typename -eq 'FileMatch') {
-            # Make URL absolute
-            $result.File.Url = [Uri]::new($Endpoint, $result.File.Url)
-            $result.Repository.Url = [Uri]::new($Endpoint, $result.Repository.Url)
-
-            if ($result.LineMatches -or $result.Symbols) {
-                # Instead of nesting LineMatches and Symbols in FileMatches, we flat out the list and let PowerShell formatting do the grouping
-                foreach ($lineMatch in $result.LineMatches) {
-                    $lineMatch.PSObject.TypeNames.Insert(0, 'Sourcegraph.LineMatch')
-                    Add-Member -InputObject $lineMatch -MemberType NoteProperty -Name 'FileMatch' -Value $result
-                    $lineMatch
-                }
-                foreach ($symbol in $result.Symbols) {
-                    $symbol.PSObject.TypeNames.Insert(0, 'Sourcegraph.Symbol')
-                    Add-Member -InputObject $symbol -MemberType NoteProperty -Name 'FileMatch' -Value $result
-                    $symbol
-                }
-            } else {
-                # The FileMatch has no line or symbol matches, which means the file name matched, so add the FileMatch itself as a result
-                $result
-            }
-        } else {
-            $result
-        }
-    }
-}
-Set-Alias Search-Src Search-Sourcegraph
-
-function Get-SourcegraphSearchSuggestions {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory)]
-        [string] $Query,
+        [Parameter(ParameterSetName = 'structural', Mandatory)]
+        [switch] $Structural,
 
         [Uri] $Endpoint = 'https://sourcegraph.com',
         [string] $Token
     )
 
     process {
+        if ($CaseSensitive) {
+            $Query += ' case:yes'
+        }
+        $variables = @{
+            query = $Query
+            patternType = $PSCmdlet.ParameterSetName
+        }
+        $data = Invoke-SourcegraphApiRequest -Query $SearchQuery -Variables $variables -Endpoint $Endpoint -Token $Token
+        if ($data.search.results.cloning.Count -gt 0) {
+            Write-Warning "Cloning:"
+            $data.search.results.cloning.name | Write-Warning
+        }
+        if ($data.search.results.missing.Count -gt 0) {
+            Write-Warning "Missing:"
+            $data.search.results.missing.name | Write-Warning
+        }
+        if ($data.search.results.timedout.Count -gt 0) {
+            Write-Warning "Timed out:"
+            $data.search.results.timedout.name | Write-Warning
+        }
+        if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
+            $PSCmdlet.PagingParameters.NewTotalCount($data.search.results.resultCount, 1)
+        }
+        if ($data.search.results.limitHit) {
+            Write-Warning "Result limit hit"
+        }
+
+        foreach ($result in $data.search.results.results) {
+            $result.PSObject.TypeNames.Insert(0, 'Sourcegraph.' + $result.__typename)
+            # Make the metadata accessible from the match objects
+            Add-Member -InputObject $result -MemberType NoteProperty -Name 'SearchResults' -Value $data.search.results
+            if ($result.__typename -eq 'FileMatch') {
+                # Make URL absolute
+                $result.File.Url = [Uri]::new($Endpoint, $result.File.Url)
+                $result.Repository.Url = [Uri]::new($Endpoint, $result.Repository.Url)
+
+                if ($result.LineMatches -or $result.Symbols) {
+                    # Instead of nesting LineMatches and Symbols in FileMatches, we flat out the list and let PowerShell formatting do the grouping
+                    foreach ($lineMatch in $result.LineMatches) {
+                        $lineMatch.PSObject.TypeNames.Insert(0, 'Sourcegraph.LineMatch')
+                        Add-Member -InputObject $lineMatch -MemberType NoteProperty -Name 'FileMatch' -Value $result
+                        $lineMatch
+                    }
+                    foreach ($symbol in $result.Symbols) {
+                        $symbol.PSObject.TypeNames.Insert(0, 'Sourcegraph.Symbol')
+                        Add-Member -InputObject $symbol -MemberType NoteProperty -Name 'FileMatch' -Value $result
+                        $symbol
+                    }
+                } else {
+                    # The FileMatch has no line or symbol matches, which means the file name matched, so add the FileMatch itself as a result
+                    $result
+                }
+            } else {
+                $result
+            }
+        }
+    }
+}
+Set-Alias Search-Src Search-Sourcegraph
+
+function Get-SourcegraphSearchSuggestions {
+    [CmdletBinding(DefaultParameterSetName = 'literal')]
+    param (
+        [Parameter(Mandatory)]
+        [string] $Query,
+
+        [Parameter(ParameterSetName = 'regexp')]
+        [Parameter(ParameterSetName = 'literal')]
+        [switch] $CaseSensitive,
+
+        [Parameter(ParameterSetName = 'regexp', Mandatory)]
+        [Alias('Regexp')]
+        [switch] $RegularExpression,
+
+        [Parameter(ParameterSetName = 'structural', Mandatory)]
+        [switch] $Structural,
+
+        [Uri] $Endpoint = 'https://sourcegraph.com',
+        [string] $Token
+    )
+
+    process {
+        if ($CaseSensitive) {
+            $Query += ' case:yes'
+        }
         $vars = @{
             query = $Query
             first = 10
+            patternType = $PSCmdlet.ParameterSetName
         }
         Invoke-SourcegraphApiRequest -Query $SuggestionsQuery -Variables $vars -Endpoint $Endpoint -Token $Token |
             ForEach-Object { $_.search.suggestions }
@@ -116,6 +157,15 @@ Register-ArgumentCompleter -CommandName Search-Sourcegraph -ParameterName Query 
     }
     if ($params.ContainsKey('Endpoint')) {
         $suggestionParams.Endpoint = $params.Endpoint
+    }
+    if ($params.ContainsKey('CaseSensitive')) {
+        $suggestionParams.CaseSensitive = $params.CaseSensitive
+    }
+    if ($params.ContainsKey('RegularExpression')) {
+        $suggestionParams.RegularExpression = $params.RegularExpression
+    }
+    if ($params.ContainsKey('Structural')) {
+        $suggestionParams.Structural = $params.Structural
     }
 
     Get-SourcegraphSearchSuggestions @suggestionParams -Query $wordToComplete.Trim(@("'", '"')) |

@@ -1,5 +1,5 @@
-query SearchSuggestions($query: String!, $first: Int!) {
-    search(query: $query) {
+query SearchSuggestions($query: String!, $first: Int!, $patternType: SearchPatternType) {
+    search(query: $query, version: V2, patternType: $patternType) {
         suggestions(first: $first) {
             __typename
             ... on Repository {
