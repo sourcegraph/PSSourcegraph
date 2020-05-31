@@ -25,10 +25,10 @@ Use `Get-Help` to see documentation for any command.
 - **Search**
   - `Search-Sourcegraph` 💡 _with query autocompletion_
 - **Code intelligence**
-  💡 _All code intelligence cmdlets support search output as pipeline input_
-  - `Get-SourcegraphHover`
+  💡 _all code intelligence cmdlets support search output as pipeline input_
+  - `Get-SourcegraphHover` 💡 _displayed as rendered markdown_
   - `Get-SourcegraphDefinition`
-  - `Get-SourcegraphReference`
+  - `Get-SourcegraphReference` 💡 _automatically paginated and streamed_
 - **Repositories**
   - `Get-SourcegraphRepository`
 - **Users**
