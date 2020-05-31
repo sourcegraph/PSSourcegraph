@@ -33,7 +33,7 @@ function Invoke-SourcegraphApiRequest {
         [Parameter(Position = 1)]
         $Variables = @{},
 
-        [string] $Endpoint = 'https://sourcegraph.com',
+        [Uri] $Endpoint = 'https://sourcegraph.com',
 
         [string] $Token
     )

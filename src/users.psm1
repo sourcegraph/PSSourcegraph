@@ -17,7 +17,7 @@ function New-SourcegraphUser {
     #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [string] $Endpoint = 'https://sourcegraph.com',
+        [Uri] $Endpoint = 'https://sourcegraph.com',
 
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory)]
@@ -54,7 +54,7 @@ function Get-SourcegraphUser {
     #>
     [CmdletBinding(SupportsPaging)]
     param(
-        [string] $Endpoint = 'https://sourcegraph.com',
+        [Uri] $Endpoint = 'https://sourcegraph.com',
         [string] $Username,
         [string] $Query,
         [string] $Tag,

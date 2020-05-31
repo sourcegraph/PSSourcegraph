@@ -38,7 +38,7 @@ function Get-SourcegraphRepository {
         [string] $SortBy = 'REPOSITORY_NAME',
         [switch] $Descending,
 
-        [string] $Endpoint = 'https://sourcegraph.com',
+        [Uri] $Endpoint = 'https://sourcegraph.com',
         [ValidateNotNullOrEmpty()]
         [string] $Token
     )
@@ -75,4 +75,4 @@ function Get-SourcegraphRepository {
         }
     }
 }
-Set-Alias Get-SrcRepositories Get-SourcegraphRepositories
+Set-Alias Get-SrcRepository Get-SourcegraphRepository
