@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
     <Controls>
         <Control>
@@ -13,7 +12,6 @@
                                         <ScriptBlock>
                                             try {
                                                 $rev = if ($_.FileMatch.File.Commit.Oid) {
-                                                    $commitUrl = "$($_.FileMatch.Repository.Url)@$($_.FileMatch.File.Commit.Oid)"
                                                     # AbbreviatedOid causes panics if queried for search results
                                                     "@`e[02m$($_.FileMatch.File.Commit.Oid.Substring(0, 7))`e[0m"
                                                 } else {
@@ -110,15 +108,14 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <ScriptBlock>
-                                    # TODO figure out what's wrong with github.com/sourcegraph/src > .gitignore "error"
+                                    $result = $_
                                     try {
                                         # Highlight match ranges
                                         $preview = $_.Preview
                                         $out = ""
                                         $start = 0
                                         foreach ($offsetAndLength in $_.OffsetAndLengths) {
-                                            $offset = $offsetAndLength[0]
-                                            $length = $offsetAndLength[1]
+                                            $offset, $length = $offsetAndLength
                                             $out += $preview.Substring($start, $offset - $start) + "`e[43m`e[30m" + $preview.Substring($offset, $length) + "`e[0m"
                                             $start += $offset + $length
                                         }
@@ -128,8 +125,8 @@
                                         }
                                         $out
                                     } catch {
-                                        Write-Warning "Error highlighting matches: " + ($_ | Out-String)
-                                        $_.Preview
+                                        Write-Warning -Message ("Error highlighting matches: " + ($_ | Out-String))
+                                        $result.Preview
                                     }
                                 </ScriptBlock>
                             </TableColumnItem>
@@ -218,10 +215,12 @@
                                         'CONSTRUCTOR'   { "`e[35m" }
                                         'FUNCTION'      { "`e[35m" }
                                         'CLASS'         { "`e[38;5;220;m" }
+                                        'ENUM'          { "`e[38;5;220;m" }
                                         'KEY'           { "`e[38;5;220;m" }
                                         'STRUCT'        { "`e[38;5;220;m" }
                                         'TYPEPAREMETER' { "`e[38;5;38;m" }
                                         'VARIABLE'      { "`e[38;5;38;m" }
+                                        'ENUMMEMBER'    { "`e[38;5;38;m" }
                                         'PROPERTY'      { "`e[38;5;110;m" }
                                         'FIELD'         { "`e[38;5;110;m" }
                                         'PACKAGE'       { "`e[38;5;208;m" }
