@@ -1,0 +1,38 @@
+query References($repository: String!, $rev: String!, $path: String!, $line: Int!, $character: Int!, $first: Int, $after: String) {
+    repository(name: $repository) {
+        commit(rev: $rev) {
+            blob(path: $path) {
+                lsif {
+                    references(line: $line, character: $character, first: $first, after: $after) {
+                        pageInfo {
+                            endCursor
+                            hasNextPage
+                        }
+                        nodes {
+                            url
+                            resource {
+                                path
+                                repository {
+                                    name
+                                }
+                                commit {
+                                    oid
+                                }
+                            }
+                            range {
+                                start {
+                                    line
+                                    character
+                                }
+                                end {
+                                    line
+                                    character
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Types>
     <Type>
         <Name>Sourcegraph.LineMatch</Name>
         <Members>
-            <!-- Convenience aliases to allow easier selection of common properties through Select-Object -Property -->
+            <!-- Convenience aliases to allow piping to codeintel cmdlets -->
             <ScriptProperty>
                 <Name>RepositoryName</Name>
                 <GetScriptBlock>$this.FileMatch.Repository.Name</GetScriptBlock>
@@ -15,6 +15,36 @@
             <ScriptProperty>
                 <Name>CommitID</Name>
                 <GetScriptBlock>$this.FileMatch.File.Commit.Oid</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>CharacterNumber</Name>
+                <GetScriptBlock>$this.offsetAndLengths | ForEach-Object { $_[0] }</GetScriptBlock>
+            </ScriptProperty>
+        </Members>
+    </Type>
+    <Type>
+        <Name>Sourcegraph.Symbol</Name>
+        <Members>
+            <!-- Convenience aliases to allow piping to codeintel cmdlets -->
+            <ScriptProperty>
+                <Name>RepositoryName</Name>
+                <GetScriptBlock>$this.FileMatch.Repository.Name</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>FilePath</Name>
+                <GetScriptBlock>$this.FileMatch.File.Path</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>CommitID</Name>
+                <GetScriptBlock>$this.FileMatch.File.Commit.Oid</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>LineNumber</Name>
+                <GetScriptBlock>$this.Location.Range.Start.Line</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>CharacterNumber</Name>
+                <GetScriptBlock>$this.Location.Range.Start.Character</GetScriptBlock>
             </ScriptProperty>
         </Members>
     </Type>

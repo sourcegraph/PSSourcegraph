@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+    <Controls>
+        <Control>
+            <Name>SourcegraphLocationGroupingFormat</Name>
+            <CustomControl>
+                <CustomEntries>
+                    <CustomEntry>
+                        <CustomItem>
+                            <Frame>
+                                <CustomItem>
+                                    <ExpressionBinding>
+                                        <ScriptBlock>
+                                            try {
+                                                $rev = if ($_.Resource.Commit.Oid) {
+                                                    # AbbreviatedOid causes panics if queried for search results
+                                                    "@`e[02m$($_.Resource.Commit.Oid.Substring(0, 7))`e[0m"
+                                                } else {
+                                                    ""
+                                                }
+                                                "`e[036m$($_.Resource.Repository.Name)`e[0m$rev > `e[035m$($_.Resource.Path)`e[0m"
+                                            } catch {
+                                                $_ | Out-String | Write-Warning
+                                            }
+                                        </ScriptBlock>
+                                        <!-- Does not work because of https://github.com/PowerShell/PowerShell/issues/7744 -->
+                                        <!-- <ScriptBlock>
+                                            try {
+                                                $rev = if ($_.FileMatch.File.Commit.Oid) {
+                                                    $commitUrl = "$($_.FileMatch.Repository.Url)@$($_.FileMatch.File.Commit.Oid)"
+                                                    # AbbreviatedOid causes panics if queried for search results
+                                                    # TODO figure out why the link does not work (but works with Out-String)
+                                                    " @ `e]8;;$commitUrl`a`e[02m$($_.FileMatch.File.Commit.Oid.Substring(0, 7))`e[0m`e]8;;`a"
+                                                } else {
+                                                    ""
+                                                }
+                                                "`e]8;;$($_.FileMatch.Repository.Url)`a`e[036m$($_.FileMatch.Repository.Name)`e[0m`e]8;;`a$rev > `e]8;;$($_.FileMatch.File.Url)`a`e[035m$($_.FileMatch.File.Path)`e[0m`e]8;;`a"
+                                            } catch {
+                                                $_ | Out-String | Write-Warning
+                                            }
+                                        </ScriptBlock> -->
+                                    </ExpressionBinding>
+                                </CustomItem>
+                            </Frame>
+                        </CustomItem>
+                    </CustomEntry>
+                </CustomEntries>
+            </CustomControl>
+        </Control>
+    </Controls>
+    <ViewDefinitions>
+        <View>
+            <Name>Location</Name>
+            <ViewSelectedBy>
+                <TypeName>Sourcegraph.Location</TypeName>
+            </ViewSelectedBy>
+            <GroupBy>
+                <ScriptBlock>
+                    $_.Resource.Repository.Name + $_.Resource.Commit.Oid + $_.Resource.Path
+                </ScriptBlock>
+                <CustomControlName>SourcegraphLocationGroupingFormat</CustomControlName>
+            </GroupBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Label>Range</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Url</Label>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <ScriptBlock>
+                                    try {
+                                        $range = $_.Range
+                                        "$($range.Start.Line + 1):$($range.Start.Character + 1)-$($range.End.Line + 1):$($range.End.Character + 1)"
+                                    } catch {
+                                        $_ | Out-String | Write-Warning
+                                    }
+                                </ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>
+                                    # Shorten commit hash
+                                    $url = $_.Url -replace '@([a-f0-9]{7})[a-f0-9]{33}/-/','@$1/-/'
+                                    if ($env:TERM_PROGRAM -eq 'vscode') {
+                                        # Link detector in VS Code doesn't detect links with "@" properly
+                                        $url = $url -replace '@','%40'
+                                    }
+                                    $url
+                                </ScriptBlock>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+    </ViewDefinitions>
+</Configuration>

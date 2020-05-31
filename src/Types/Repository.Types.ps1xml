@@ -1,0 +1,11 @@
+<Types>
+    <Type>
+        <Name>Sourcegraph.Repository</Name>
+        <Members>
+            <AliasProperty>
+                <Name>RepositoryName</Name>
+                <ReferencedMemberName>Name</ReferencedMemberName>
+            </AliasProperty>
+        </Members>
+    </Type>
+</Types>

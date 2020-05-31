@@ -1,0 +1,25 @@
+query Hover($repository: String!, $rev: String!, $path: String!, $line: Int!, $character: Int!) {
+    repository(name: $repository) {
+        commit(rev: $rev) {
+            blob(path: $path) {
+                lsif {
+                    hover(line: $line, character: $character) {
+                        markdown {
+                            text
+                        }
+                        range {
+                            start {
+                                line
+                                character
+                            }
+                            end {
+                                line
+                                character
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -20,13 +20,22 @@ Install-Module PSSourcegraph
 
 ## Included
 
-- `Search-Sourcegraph` with autocompletion
-- `Disable-SourcegraphRepository`
-- `Enable-SourcegraphRepository`
-- `Get-SourcegraphRepository`
-- `Get-SourcegraphUser`
-- `New-SourcegraphUser`
-- `Invoke-SourcegraphApiRequest`
+Use `Get-Help` to see documentation for any command.
+
+- **Search**
+  - `Search-Sourcegraph` 💡 _with query autocompletion_
+- **Code intelligence**
+  💡 _All code intelligence cmdlets support search output as pipeline input_
+  - `Get-SourcegraphHover`
+  - `Get-SourcegraphDefinition`
+  - `Get-SourcegraphReference`
+- **Repositories**
+  - `Get-SourcegraphRepository`
+- **Users**
+  - `Get-SourcegraphUser`
+  - `New-SourcegraphUser`
+- **Utility**
+  - `Invoke-SourcegraphApiRequest`
 
 Missing something? Please file an issue!
 

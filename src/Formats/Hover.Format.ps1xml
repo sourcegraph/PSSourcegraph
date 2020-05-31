@@ -1,0 +1,23 @@
+<Configuration>
+    <ViewDefinitions>
+        <View>
+            <Name>HoverMarkdown</Name>
+            <ViewSelectedBy>
+                <TypeName>Sourcegraph.Hover</TypeName>
+            </ViewSelectedBy>
+            <CustomControl>
+                <CustomEntries>
+                    <CustomEntry>
+                        <CustomItem>
+                            <ExpressionBinding>
+                                <ScriptBlock>
+                                    (ConvertFrom-Markdown -InputObject $_.markdown.text -AsVT100EncodedString).VT100EncodedString
+                                </ScriptBlock>
+                            </ExpressionBinding>
+                        </CustomItem>
+                    </CustomEntry>
+                </CustomEntries>
+            </CustomControl>
+        </View>
+    </ViewDefinitions>
+</Configuration>

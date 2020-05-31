@@ -1,0 +1,38 @@
+query Definition($repository: String!, $rev: String!, $path: String!, $line: Int!, $character: Int!) {
+    repository(name: $repository) {
+        commit(rev: $rev) {
+            blob(path: $path) {
+                lsif {
+                    definitions(line: $line, character: $character) {
+                        pageInfo {
+                            endCursor
+                            hasNextPage
+                        }
+                        nodes {
+                            url
+                            resource {
+                                path
+                                repository {
+                                    name
+                                }
+                                commit {
+                                    oid
+                                }
+                            }
+                            range {
+                                start {
+                                    line
+                                    character
+                                }
+                                end {
+                                    line
+                                    character
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

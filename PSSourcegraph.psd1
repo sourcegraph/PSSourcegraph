@@ -62,11 +62,15 @@
     # Type files (.ps1xml) to be loaded when importing this module
     TypesToProcess    = @(
         'src/Types/Search.Types.ps1xml'
+        'src/Types/Location.Types.ps1xml'
+        'src/Types/Repository.Types.ps1xml'
     )
 
     # Format files (.ps1xml) to be loaded when importing this module
     FormatsToProcess  = @(
         'src/Formats/Search.Format.ps1xml'
+        'src/Formats/Hover.Format.ps1xml'
+        'src/Formats/Location.Format.ps1xml'
     )
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
@@ -74,12 +78,13 @@
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport = @(
-        'Disable-SourcegraphRepository',
-        'Enable-SourcegraphRepository',
-        'Get-SourcegraphRepository',
-        'Get-SourcegraphUser',
-        'Invoke-SourcegraphApiRequest',
-        'New-SourcegraphUser',
+        'Get-SourcegraphRepository'
+        'Get-SourcegraphHover'
+        'Get-SourcegraphDefinition'
+        'Get-SourcegraphReference'
+        'Get-SourcegraphUser'
+        'Invoke-SourcegraphApiRequest'
+        'New-SourcegraphUser'
         'Search-Sourcegraph'
     )
 
@@ -91,12 +96,13 @@
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
     AliasesToExport   = @(
-        'Disable-SrcRepository',
-        'Enable-SrcRepository',
-        'Get-SrcRepositories',
+        'Get-SrcRepository',
+        'Get-SrcHover',
+        'Get-SrcDefinition',
+        'Get-SrcReference',
         'Get-SrcUser',
-        'Invoke-SrcApiRequest',
         'New-SrcUser',
+        'Invoke-SrcApiRequest',
         'Search-Src'
     )
 

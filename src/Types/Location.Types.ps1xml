@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Types>
+    <Type>
+        <Name>Sourcegraph.Location</Name>
+        <Members>
+            <!-- Convenience aliases to allow easier selection of common properties through Select-Object -Property -->
+            <ScriptProperty>
+                <Name>RepositoryName</Name>
+                <GetScriptBlock>$this.Resource.Repository.Name</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>FilePath</Name>
+                <GetScriptBlock>$this.Resource.Path</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>CommitID</Name>
+                <GetScriptBlock>$this.Resource.Commit.Oid</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>LineNumber</Name>
+                <GetScriptBlock>$this.Range.Start.Line</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>CharacterNumber</Name>
+                <GetScriptBlock>$this.Range.Start.Character</GetScriptBlock>
+            </ScriptProperty>
+        </Members>
+    </Type>
+</Types>
