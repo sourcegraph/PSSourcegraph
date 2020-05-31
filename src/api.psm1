@@ -49,6 +49,8 @@ function Invoke-SourcegraphApiRequest {
         query     = $Query
         variables = $Variables
     }
+    Write-Verbose "Executing query:`n$Query"
+    Write-Verbose "Variables: $($Variables | ConvertTo-Json)"
     $parsed = Invoke-RestMethod `
         -Method Post `
         -Uri $uri `
