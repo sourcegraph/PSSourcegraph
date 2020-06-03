@@ -15,7 +15,7 @@ before_install:
   - sudo apt-get install -y powershell
 
 script:
-  - pwsh -c 'Import-Module ./PSSourcegraph.psd1'
+  - pwsh -c 'Import-Module ./PSSourcegraph/PSSourcegraph.psd1'
 
 if: tag IS blank
 
