@@ -12,10 +12,10 @@
     RootModule        = 'PSSourcegraph.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.3.0'
+    ModuleVersion     = '0.3.1'
 
     # Supported PSEditions
-    # CompatiblePSEditions = @()
+    CompatiblePSEditions = @('Core')
 
     # ID used to uniquely identify this module
     GUID              = '3c3b4942-3d18-420a-8b04-ee7cdd21907d'
@@ -33,7 +33,7 @@
     Description       = 'PowerShell client for the Sourcegraph API'
 
     # Minimum version of the PowerShell engine required by this module
-    # PowerShellVersion = ''
+    PowerShellVersion = '7.0.0'
 
     # Name of the PowerShell host required by this module
     # PowerShellHostName = ''
@@ -113,7 +113,7 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags       = @('sourcegraph', 'graphql', 'api')
+            Tags       = @('sourcegraph', 'graphql', 'api', 'Windows', 'MacOS', 'Linux')
 
             # A URL to the license for this module.
             LicenseUri = 'https://github.com/sourcegraph/PSSourcegraph/blob/master/LICENSE'
