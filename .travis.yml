@@ -23,6 +23,8 @@ jobs:
   include:
     - stage: test
     - stage: release
+      language: node_js
+      node_js: '14'
       cache:
         yarn: true
       install:
