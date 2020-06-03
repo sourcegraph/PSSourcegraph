@@ -18,3 +18,19 @@ script:
   - pwsh -c 'Import-Module ./PSSourcegraph.psd1'
 
 if: tag IS blank
+
+jobs:
+  include:
+    - stage: test
+    - stage: release
+      cache:
+        yarn: true
+      install:
+        - yarn --frozen-lockfile
+      script:
+        - yarn semantic-release
+
+stages:
+  - test
+  - name: release
+    if: branch = master AND type = push AND fork = false
