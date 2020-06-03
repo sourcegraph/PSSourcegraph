@@ -12,7 +12,7 @@ before_install:
   # Enable the "universe" repositories
   - sudo add-apt-repository universe
   # Install PowerShell
-  - sudo apt-get install -y powershell
+  - sudo apt-get install -y powershell dotnet-sdk-3.1
 
 script:
   - pwsh -c 'Import-Module ./PSSourcegraph/PSSourcegraph.psd1'
@@ -24,9 +24,8 @@ jobs:
     - stage: test
     - stage: release
       # Publish-Module needs dotnet CLI
-      language: csharp
-      dotnet: '2.2.401'
-      mono: none
+      language: node_js
+      node_js: '14'
       cache:
         yarn: true
       install:
