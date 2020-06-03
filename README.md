@@ -3,7 +3,7 @@
 [![powershellgallery](https://img.shields.io/powershellgallery/v/PSSourcegraph.svg)](https://www.powershellgallery.com/packages/PSSourcegraph)
 [![downloads](https://img.shields.io/powershellgallery/dt/PSSourcegraph.svg?label=downloads)](https://www.powershellgallery.com/packages/PSSourcegraph)
 [![build](https://travis-ci.org/sourcegraph/PSSourcegraph.svg?branch=master)](https://travis-ci.org/sourcegraph/PSSourcegraph)
-![powershell: >=7.0.0](https://img.shields.io/badge/powershell-%3E%3D6.1.0-blue.svg)
+![powershell: >=7.0.0](https://img.shields.io/badge/powershell-%3E%3D7.0.0-blue.svg)
 ![platform](https://img.shields.io/powershellgallery/p/PSSourcegraph.svg?colorB=blue)
 
 Search Sourcegraph from PowerShell
