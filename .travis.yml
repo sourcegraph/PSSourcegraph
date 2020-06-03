@@ -1,5 +1,9 @@
 language: minimal
 
+env:
+  global:
+    - FORCE_COLOR=3
+
 dist: bionic
 
 before_install:
