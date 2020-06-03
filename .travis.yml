@@ -4,7 +4,8 @@ dist: bionic
 
 before_install:
   # Install .NET
-  - curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin
+  - curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
+  - source dotnet-install.sh
   # Download the Microsoft repository GPG keys
   - wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
   # Register the Microsoft repository GPG keys
