@@ -77,15 +77,16 @@
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
+    # Note the DefaultCommandPrefix will be added automatically to each of these on import.
     FunctionsToExport = @(
-        'Get-SourcegraphRepository'
-        'Get-SourcegraphHover'
-        'Get-SourcegraphDefinition'
-        'Get-SourcegraphReference'
-        'Get-SourcegraphUser'
-        'Invoke-SourcegraphApiRequest'
-        'New-SourcegraphUser'
-        'Search-Sourcegraph'
+        'Get-Repository'
+        'Get-Hover'
+        'Get-Definition'
+        'Get-Reference'
+        'Get-User'
+        'Invoke-ApiRequest'
+        'New-User'
+        'Search-'
     )
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
@@ -95,16 +96,7 @@
     VariablesToExport = @()
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport   = @(
-        'Get-SrcRepository',
-        'Get-SrcHover',
-        'Get-SrcDefinition',
-        'Get-SrcReference',
-        'Get-SrcUser',
-        'New-SrcUser',
-        'Invoke-SrcApiRequest',
-        'Search-Src'
-    )
+    AliasesToExport   = @()
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -143,7 +135,6 @@
     # HelpInfoURI = ''
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
-    # DefaultCommandPrefix = ''
-
+    DefaultCommandPrefix = 'Sourcegraph'
 }
 

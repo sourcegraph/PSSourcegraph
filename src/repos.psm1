@@ -1,8 +1,9 @@
+Import-Module -Scope Local "$PSScriptRoot/api.psm1"
 
 $repositoryFields = Get-Content -Raw "$PSScriptRoot/queries/RepositoryFields.graphql"
 $repositoryQuery = (Get-Content -Raw "$PSScriptRoot/queries/Repository.graphql") + $repositoryFields
 $repositoriesQuery = (Get-Content -Raw "$PSScriptRoot/queries/Repositories.graphql") + $repositoryFields
-function Get-SourcegraphRepository {
+function Get-Repository {
     <#
     .SYNOPSIS
         List all repositories known to a Sourcegraph instance
@@ -47,7 +48,7 @@ function Get-SourcegraphRepository {
                 id       = $Id
                 cloneUrl = $CloneUrl
             }
-            $data = Invoke-SourcegraphApiRequest -Query $repositoryQuery -Variables $vars -Endpoint $Endpoint -Token $Token
+            $data = Invoke-ApiRequest -Query $repositoryQuery -Variables $vars -Endpoint $Endpoint -Token $Token
             $data.repository
             if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
                 $count = if ($data.repository) { 1 } else { 0 }
@@ -66,7 +67,7 @@ function Get-SourcegraphRepository {
                 orderBy    = $SortBy
                 descending = [bool]$Descending
             }
-            $data = Invoke-SourcegraphApiRequest -Query $repositoriesQuery -Variables $vars -Endpoint $Endpoint -Token $Token
+            $data = Invoke-ApiRequest -Query $repositoriesQuery -Variables $vars -Endpoint $Endpoint -Token $Token
             if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
                 $PSCmdlet.PagingParameters.NewTotalCount($data.repositories.totalCount, 1)
             }
@@ -74,4 +75,4 @@ function Get-SourcegraphRepository {
         }
     }
 }
-Set-Alias Get-SrcRepository Get-SourcegraphRepository
+Export-ModuleMember -Function Get-Repository

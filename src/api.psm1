@@ -1,5 +1,4 @@
-
-function Invoke-SourcegraphApiRequest {
+function Invoke-ApiRequest {
     <#
     .SYNOPSIS
         Invoke an API Request to the Sourcegraph GraphQL API
@@ -15,11 +14,11 @@ function Invoke-SourcegraphApiRequest {
     .PARAMETER Token
         The authentication token (if needed). Go to the settings page on Sourcegraph to generate one.
     .EXAMPLE
-        C:\PS> Invoke-SourcegraphApiRequest 'query { currentUser { username } }'
+        Invoke-SourcegraphApiRequest 'query { currentUser { username } }'
 
         Echo back the username of the authenticated user
     .EXAMPLE
-        C:\PS> Invoke-SourcegraphApiRequest 'query($query: String) { search(query: $query) { results { resultCount } } }' @{query = 'repogroup:sample test'}
+        Invoke-SourcegraphApiRequest 'query($query: String) { search(query: $query) { results { resultCount } } }' @{query = 'repogroup:sample test'}
 
         Search the repogroup "sample" for the term "test"
     #>
@@ -73,4 +72,3 @@ function Invoke-SourcegraphApiRequest {
     }
     $parsed.data
 }
-Set-Alias Invoke-SrcApiRequest Invoke-SourcegraphApiRequest

@@ -1,6 +1,7 @@
+Import-Module -Scope Local "$PSScriptRoot/api.psm1"
 
 $CreateUserQuery = Get-Content -Raw "$PSScriptRoot/queries/CreateUser.graphql"
-function New-SourcegraphUser {
+function New-User {
     <#
     .SYNOPSIS
         Creates a new user account
@@ -30,16 +31,16 @@ function New-SourcegraphUser {
     )
 
     if ($PSCmdlet.ShouldProcess("Creating user $Username <$Email>", "Create user $Username <$Email>?", "Confirm")) {
-        $data = Invoke-SourcegraphApiRequest -Query $CreateUserQuery -Variables @{username = $Username; email = $Email} -Endpoint $Endpoint -Token $Token
+        $data = Invoke-ApiRequest -Query $CreateUserQuery -Variables @{username = $Username; email = $Email} -Endpoint $Endpoint -Token $Token
         $data.createUser
     }
 }
-Set-Alias New-SrcUser New-SourcegraphUser
+Export-ModuleMember -Function New-User
 
 $UserFields = Get-Content -Raw "$PSScriptRoot/queries/UserFields.graphql"
 $UserQuery = (Get-Content -Raw "$PSScriptRoot/queries/User.graphql") + $UserFields
 $UsersQuery = (Get-Content -Raw "$PSScriptRoot/queries/Users.graphql") + $UserFields
-function Get-SourcegraphUser {
+function Get-User {
     <#
     .SYNOPSIS
         Get users on a Sourcegraph instance
@@ -66,17 +67,17 @@ function Get-SourcegraphUser {
     if ($Username) {
         $query = $UserQuery
         $variables = @{ username = $Username }
-        (Invoke-SourcegraphApiRequest -Query $UserQuery -Variables $variables -Endpoint $Endpoint -Token $Token).user
+        (Invoke-ApiRequest -Query $UserQuery -Variables $variables -Endpoint $Endpoint -Token $Token).user
     } else {
         $variables = @{ query = $Query; tag = $Tag; activePeriod = $ActivePeriod }
         if ($PSBoundParameters.ContainsKey('First')) {
             $variables['first'] = $PSCmdlet.PagingParameters.First
         }
-        $data = Invoke-SourcegraphApiRequest -Query $UsersQuery -Variables $variables -Endpoint $Endpoint -Token $Token
+        $data = Invoke-ApiRequest -Query $UsersQuery -Variables $variables -Endpoint $Endpoint -Token $Token
         if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
             $PSCmdlet.PagingParameters.NewTotalCount($data.users.totalCount, 1)
         }
         $data.users.nodes
     }
 }
-Set-Alias Get-SrcUser Get-SourcegraphUser
+Export-ModuleMember -Function Get-User

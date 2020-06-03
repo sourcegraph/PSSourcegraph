@@ -1,9 +1,13 @@
+Import-Module -Scope Local "$PSScriptRoot/api.psm1"
 
 $RepositoryFields = Get-Content -Raw "$PSScriptRoot/queries/RepositoryFields.graphql"
 $SearchQuery = (Get-Content -Raw "$PSScriptRoot/queries/Search.graphql") + $RepositoryFields
 $SuggestionsQuery = (Get-Content -Raw "$PSScriptRoot/queries/Suggestions.graphql")
 
-function Search-Sourcegraph {
+# Note: The default name of this function is Search-Sourcegraph,
+# the prefix/suffix is added automatically as configured in PSSourcegraph.psd1
+# or overridden when calling Import-Module.
+function Search- {
     <#
     .SYNOPSIS
         Get users on a Sourcegraph instance
@@ -48,7 +52,7 @@ function Search-Sourcegraph {
             query = $Query
             patternType = $PSCmdlet.ParameterSetName
         }
-        $data = Invoke-SourcegraphApiRequest -Query $SearchQuery -Variables $variables -Endpoint $Endpoint -Token $Token
+        $data = Invoke-ApiRequest -Query $SearchQuery -Variables $variables -Endpoint $Endpoint -Token $Token
         if ($data.search.results.cloning.Count -gt 0) {
             Write-Warning "Cloning:"
             $data.search.results.cloning.name | Write-Warning
@@ -99,9 +103,9 @@ function Search-Sourcegraph {
         }
     }
 }
-Set-Alias Search-Src Search-Sourcegraph
+Export-ModuleMember -Function Search-
 
-function Get-SourcegraphSearchSuggestions {
+function Get-SearchSuggestions {
     [CmdletBinding(DefaultParameterSetName = 'literal')]
     param (
         [Parameter(Mandatory)]
@@ -131,7 +135,7 @@ function Get-SourcegraphSearchSuggestions {
             first = 10
             patternType = $PSCmdlet.ParameterSetName
         }
-        Invoke-SourcegraphApiRequest -Query $SuggestionsQuery -Variables $vars -Endpoint $Endpoint -Token $Token |
+        Invoke-ApiRequest -Query $SuggestionsQuery -Variables $vars -Endpoint $Endpoint -Token $Token |
             ForEach-Object { $_.search.suggestions }
     }
 }

@@ -39,6 +39,17 @@ Use `Get-Help` to see documentation for any command.
 
 Missing something? Please file an issue!
 
+## Alias
+
+By default, all commands are prefixed with `Sourcegraph` like shown above.
+If you prefer a shorter prefix, e.g. `Src` or `Sg`, you can import the module under a different prefix in your `$PROFILE`:
+
+```powershell
+Import-Module PSSourcegraph -Prefix Src
+```
+
+The commands are then available under that prefix, e.g. `Search-Src` or `Get-SrcHover`.
+
 ## Configuration
 
 You can use a private instance by passing an instance URL with the `-Endpoint` parameter and an API token with the `-Token` parameter to any command.

@@ -1,8 +1,10 @@
+Import-Module -Scope Local "$PSScriptRoot/api.psm1"
+
 $HoverQuery = Get-Content -Raw "$PSScriptRoot/queries/Hover.graphql"
 $DefinitionQuery = Get-Content -Raw "$PSScriptRoot/queries/Definition.graphql"
 $ReferenceQuery = Get-Content -Raw "$PSScriptRoot/queries/Reference.graphql"
 
-function Get-SourcegraphHover {
+function Get-Hover {
     <#
     .SYNOPSIS
         Gets the hover content for a token at a given position in a file.
@@ -63,7 +65,7 @@ function Get-SourcegraphHover {
                 line = $LineNumber
                 character = $_
             }
-            $data = Invoke-SourcegraphApiRequest -Query $HoverQuery -Variables $variables -Endpoint $Endpoint -Token $Token
+            $data = Invoke-ApiRequest -Query $HoverQuery -Variables $variables -Endpoint $Endpoint -Token $Token
             if (!$data.repository) {
                 Write-Error "Repository $RepositoryName not found"
                 return
@@ -89,9 +91,9 @@ function Get-SourcegraphHover {
         }
     }
 }
-Set-Alias Get-SrcHover Get-SourcegraphHover
+Export-ModuleMember -Function Get-Hover
 
-function Get-SourcegraphDefinition {
+function Get-Definition {
     <#
     .SYNOPSIS
         Gets the definition location for a token at a given position in a file.
@@ -154,7 +156,7 @@ function Get-SourcegraphDefinition {
                     line = $LineNumber
                     character = $_
                 }
-                $data = Invoke-SourcegraphApiRequest -Query $DefinitionQuery -Variables $variables -Endpoint $Endpoint -Token $Token
+                $data = Invoke-ApiRequest -Query $DefinitionQuery -Variables $variables -Endpoint $Endpoint -Token $Token
                 if (!$data.repository) {
                     Write-Error "Repository $RepositoryName not found"
                     return
@@ -181,9 +183,9 @@ function Get-SourcegraphDefinition {
             }
     }
 }
-Set-Alias Get-SrcDefinition Get-SourcegraphDefinition
+Export-ModuleMember -Function Get-Definition
 
-function Get-SourcegraphReference {
+function Get-Reference {
     <#
     .SYNOPSIS
         Gets the reference locations for a given position in a file.
@@ -252,7 +254,7 @@ function Get-SourcegraphReference {
                     after = $null
                 }
                 while ($true) {
-                    $data = Invoke-SourcegraphApiRequest -Query $ReferenceQuery -Variables $variables -Endpoint $Endpoint -Token $Token
+                    $data = Invoke-ApiRequest -Query $ReferenceQuery -Variables $variables -Endpoint $Endpoint -Token $Token
                     if (!$data.repository) {
                         Write-Error "Repository $RepositoryName not found"
                         return
@@ -285,4 +287,4 @@ function Get-SourcegraphReference {
             }
     }
 }
-Set-Alias Get-SrcReference Get-SourcegraphReference
+Export-ModuleMember -Function Get-Reference
