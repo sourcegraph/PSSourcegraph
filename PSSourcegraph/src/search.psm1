@@ -1,8 +1,8 @@
 Import-Module -Scope Local "$PSScriptRoot/api.psm1"
 
-$RepositoryFields = Get-Content -Raw "$PSScriptRoot/queries/RepositoryFields.graphql"
-$SearchQuery = (Get-Content -Raw "$PSScriptRoot/queries/Search.graphql") + $RepositoryFields
-$SuggestionsQuery = (Get-Content -Raw "$PSScriptRoot/queries/Suggestions.graphql")
+$RepositoryFields = Get-Content -Raw "$PSScriptRoot/../queries/RepositoryFields.graphql"
+$SearchQuery = (Get-Content -Raw "$PSScriptRoot/../queries/Search.graphql") + $RepositoryFields
+$SuggestionsQuery = (Get-Content -Raw "$PSScriptRoot/../queries/Suggestions.graphql")
 
 # Note: The default name of this function is Search-Sourcegraph,
 # the prefix/suffix is added automatically as configured in PSSourcegraph.psd1

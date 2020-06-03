@@ -61,16 +61,16 @@
 
     # Type files (.ps1xml) to be loaded when importing this module
     TypesToProcess    = @(
-        'src/Types/Search.Types.ps1xml'
-        'src/Types/Location.Types.ps1xml'
-        'src/Types/Repository.Types.ps1xml'
+        'Types/Search.Types.ps1xml'
+        'Types/Location.Types.ps1xml'
+        'Types/Repository.Types.ps1xml'
     )
 
     # Format files (.ps1xml) to be loaded when importing this module
     FormatsToProcess  = @(
-        'src/Formats/Search.Format.ps1xml'
-        'src/Formats/Hover.Format.ps1xml'
-        'src/Formats/Location.Format.ps1xml'
+        'Formats/Search.Format.ps1xml'
+        'Formats/Hover.Format.ps1xml'
+        'Formats/Location.Format.ps1xml'
     )
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess

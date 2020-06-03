@@ -1,8 +1,8 @@
 Import-Module -Scope Local "$PSScriptRoot/api.psm1"
 
-$repositoryFields = Get-Content -Raw "$PSScriptRoot/queries/RepositoryFields.graphql"
-$repositoryQuery = (Get-Content -Raw "$PSScriptRoot/queries/Repository.graphql") + $repositoryFields
-$repositoriesQuery = (Get-Content -Raw "$PSScriptRoot/queries/Repositories.graphql") + $repositoryFields
+$repositoryFields = Get-Content -Raw "$PSScriptRoot/../queries/RepositoryFields.graphql"
+$repositoryQuery = (Get-Content -Raw "$PSScriptRoot/../queries/Repository.graphql") + $repositoryFields
+$repositoriesQuery = (Get-Content -Raw "$PSScriptRoot/../queries/Repositories.graphql") + $repositoryFields
 function Get-Repository {
     <#
     .SYNOPSIS

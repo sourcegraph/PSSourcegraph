@@ -1,8 +1,8 @@
 Import-Module -Scope Local "$PSScriptRoot/api.psm1"
 
-$HoverQuery = Get-Content -Raw "$PSScriptRoot/queries/Hover.graphql"
-$DefinitionQuery = Get-Content -Raw "$PSScriptRoot/queries/Definition.graphql"
-$ReferenceQuery = Get-Content -Raw "$PSScriptRoot/queries/Reference.graphql"
+$HoverQuery = Get-Content -Raw "$PSScriptRoot/../queries/Hover.graphql"
+$DefinitionQuery = Get-Content -Raw "$PSScriptRoot/../queries/Definition.graphql"
+$ReferenceQuery = Get-Content -Raw "$PSScriptRoot/../queries/Reference.graphql"
 
 function Get-Hover {
     <#

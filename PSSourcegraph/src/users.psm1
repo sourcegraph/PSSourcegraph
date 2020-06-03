@@ -1,6 +1,6 @@
 Import-Module -Scope Local "$PSScriptRoot/api.psm1"
 
-$CreateUserQuery = Get-Content -Raw "$PSScriptRoot/queries/CreateUser.graphql"
+$CreateUserQuery = Get-Content -Raw "$PSScriptRoot/../queries/CreateUser.graphql"
 function New-User {
     <#
     .SYNOPSIS
@@ -37,9 +37,9 @@ function New-User {
 }
 Export-ModuleMember -Function New-User
 
-$UserFields = Get-Content -Raw "$PSScriptRoot/queries/UserFields.graphql"
-$UserQuery = (Get-Content -Raw "$PSScriptRoot/queries/User.graphql") + $UserFields
-$UsersQuery = (Get-Content -Raw "$PSScriptRoot/queries/Users.graphql") + $UserFields
+$UserFields = Get-Content -Raw "$PSScriptRoot/../queries/UserFields.graphql"
+$UserQuery = (Get-Content -Raw "$PSScriptRoot/../queries/User.graphql") + $UserFields
+$UsersQuery = (Get-Content -Raw "$PSScriptRoot/../queries/Users.graphql") + $UserFields
 function Get-User {
     <#
     .SYNOPSIS
