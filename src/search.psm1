@@ -37,7 +37,7 @@ function Search-Sourcegraph {
         [switch] $Structural,
 
         [Uri] $Endpoint = 'https://sourcegraph.com',
-        [string] $Token
+        [SecureString] $Token
     )
 
     process {
@@ -119,7 +119,7 @@ function Get-SourcegraphSearchSuggestions {
         [switch] $Structural,
 
         [Uri] $Endpoint = 'https://sourcegraph.com',
-        [string] $Token
+        [SecureString] $Token
     )
 
     process {

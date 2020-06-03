@@ -39,8 +39,7 @@ function Get-SourcegraphRepository {
         [switch] $Descending,
 
         [Uri] $Endpoint = 'https://sourcegraph.com',
-        [ValidateNotNullOrEmpty()]
-        [string] $Token
+        [SecureString] $Token
     )
     process {
         if ($Id -or $CloneUrl) {

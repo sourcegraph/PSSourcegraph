@@ -34,16 +34,15 @@ function Invoke-SourcegraphApiRequest {
         $Variables = @{},
 
         [Uri] $Endpoint = 'https://sourcegraph.com',
-
-        [string] $Token
+        [SecureString] $Token
     )
 
     $uri = [Uri]::new([Uri]::new($Endpoint), '/.api/graphql')
     $header = @{
         "User-Agent" = "Sourcegraph for PowerShell"
     }
-    if (-not [string]::IsNullOrEmpty($Token)) {
-        $header["Authorization"] = "token $Token"
+    if ($Token) {
+        $header["Authorization"] = "token $($Token | ConvertFrom-SecureString -AsPlainText)"
     }
     $body = @{
         query     = $Query

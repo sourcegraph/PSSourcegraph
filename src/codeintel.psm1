@@ -30,8 +30,6 @@ function Get-SourcegraphHover {
     #>
     [CmdletBinding()]
     param(
-        [Uri] $Endpoint = 'https://sourcegraph.com',
-
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [string] $RepositoryName,
@@ -52,8 +50,8 @@ function Get-SourcegraphHover {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int[]] $CharacterNumber, # Supports multiple character numbers to support piping a LineMatch
 
-        [ValidateNotNullOrEmpty()]
-        [string] $Token
+        [Uri] $Endpoint = 'https://sourcegraph.com',
+        [SecureString] $Token
     )
 
     process {
@@ -143,7 +141,7 @@ function Get-SourcegraphDefinition {
         [int[]] $CharacterNumber, # Supports multiple character numbers to support piping a LineMatch
 
         [ValidateNotNullOrEmpty()]
-        [string] $Token
+        [SecureString] $Token
     )
 
     process {
@@ -238,7 +236,7 @@ function Get-SourcegraphReference {
         [int] $PageSize = 50,
 
         [ValidateNotNullOrEmpty()]
-        [string] $Token
+        [SecureString] $Token
     )
 
     process {

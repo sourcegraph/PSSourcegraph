@@ -17,8 +17,6 @@ function New-SourcegraphUser {
     #>
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [Uri] $Endpoint = 'https://sourcegraph.com',
-
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory)]
         [string] $Username,
@@ -27,8 +25,8 @@ function New-SourcegraphUser {
         [Parameter(Mandatory)]
         [string] $Email,
 
-        [ValidateNotNullOrEmpty()]
-        [string] $Token
+        [Uri] $Endpoint = 'https://sourcegraph.com',
+        [SecureString] $Token
     )
 
     if ($PSCmdlet.ShouldProcess("Creating user $Username <$Email>", "Create user $Username <$Email>?", "Confirm")) {
@@ -62,7 +60,7 @@ function Get-SourcegraphUser {
         [ValidateSet('TODAY', 'THIS_WEEK', 'THIS_MONTH', 'ALL_TIME')]
         [string] $ActivePeriod,
 
-        [string] $Token
+        [SecureString] $Token
     )
 
     if ($Username) {

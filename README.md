@@ -41,9 +41,32 @@ Missing something? Please file an issue!
 
 ## Configuration
 
-You can configure a default endpoint and token to be used by modifying `$PSDefaultParameterValues` in your `$PROFILE`:
+You can use a private instance by passing an instance URL with the `-Endpoint` parameter and an API token with the `-Token` parameter to any command.
+The token must be a `SecureString` for security.
+To configure a default endpoint and token to use, modify `$PSDefaultParameterValues` in your `$PROFILE`:
+
+### On Windows
 
 ```powershell
-$PSDefaultParameterValues['*Sourcegraph*:Token'] = '5c01fd47a2b2187c2947f8a2eb76b358f3ed0e26'
 $PSDefaultParameterValues['*Sourcegraph*:Endpoint'] = 'https://sourcegraph.example.com'
+$PSDefaultParameterValues['*Sourcegraph*:Token'] = 'YOUR_ENCRYPTED_TOKEN' | ConvertTo-SecureString
 ```
+
+To get the value for `YOUR_ENCRYPTED_TOKEN`, run `Read-Host -AsSecureString | ConvertFrom-SecureString` once
+and paste in your token.
+
+### On macOS/Linux
+
+macOS and Linux do not have access to the Windows Data Protection API, so they cannot use
+`ConvertFrom-SecureString` to generate an encrypted plaintext version of the token without a custom encryption
+key.
+
+If you are not concerned about storing the token in plain text in the `profile.ps1`, you can set it like this:
+
+```powershell
+$PSDefaultParameterValues['*Sourcegraph*:Endpoint'] = 'https://sourcegraph.example.com'
+$PSDefaultParameterValues['*Sourcegraph*:Token'] = 'YOUR_PLAINTEXT_TOKEN' | ConvertTo-SecureString -AsPlainText -Force
+```
+
+Alternatively, you could store the token in a password manager or the Keychain, then retrieve it in your
+profile and set it the same way.
