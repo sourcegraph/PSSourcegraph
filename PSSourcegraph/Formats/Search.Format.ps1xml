@@ -116,8 +116,14 @@
                                         $start = 0
                                         foreach ($offsetAndLength in $_.OffsetAndLengths) {
                                             $offset, $length = $offsetAndLength
-                                            $out += $preview.Substring($start, $offset - $start) + "`e[43m`e[30m" + $preview.Substring($offset, $length) + "`e[0m"
-                                            $start += $offset + $length
+                                            $out +=
+                                                # Not highlighted
+                                                $preview.Substring($start, $offset - $start) +
+                                                "`e[43m`e[30m" +
+                                                # Highlighted
+                                                $preview.Substring($offset, $length) +
+                                                "`e[0m"
+                                            $start = $offset + $length
                                         }
                                         # Add rest
                                         if ($preview.Length -gt $start) {
@@ -125,7 +131,7 @@
                                         }
                                         $out
                                     } catch {
-                                        Write-Warning -Message ("Error highlighting matches: " + ($_ | Out-String))
+                                        Write-Warning -Message "Error highlighting matches: $($_ | Out-String)`nPreview: $($result.Preview | ConvertTo-Json)`nOffsetAndLengths: $($result.OffsetAndLengths | ConvertTo-Json -Compress)"
                                         $result.Preview
                                     }
                                 </ScriptBlock>
