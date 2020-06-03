@@ -3,9 +3,6 @@ language: minimal
 dist: bionic
 
 before_install:
-  # Install .NET
-  - curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
-  - source dotnet-install.sh
   # Download the Microsoft repository GPG keys
   - wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
   # Register the Microsoft repository GPG keys
@@ -26,8 +23,10 @@ jobs:
   include:
     - stage: test
     - stage: release
-      language: node_js
-      node_js: '14'
+      # Publish-Module needs dotnet CLI
+      language: csharp
+      dotnet: '2.2.401'
+      mono: none
       cache:
         yarn: true
       install:
