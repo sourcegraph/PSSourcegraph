@@ -1,18 +1,11 @@
 query GetRepositories(
-    $first: Int,
-    $query: String,
-    $names: [String!],
-    $orderBy: RepositoryOrderBy,
+    $first: Int
+    $query: String
+    $names: [String!]
+    $orderBy: RepositoryOrderBy
     $descending: Boolean
 ) {
-    repositories(
-        first: $first,
-        query: $query,
-        names: $names,
-        disabled: true,
-        orderBy: $orderBy,
-        descending: $descending
-    ) {
+    repositories(first: $first, query: $query, names: $names, orderBy: $orderBy, descending: $descending) {
         totalCount
         nodes {
             ...RepositoryFields

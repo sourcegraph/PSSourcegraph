@@ -1,7 +1,8 @@
 Import-Module -Scope Local "$PSScriptRoot/api.psm1"
 
 $repositoryFields = Get-Content -Raw "$PSScriptRoot/../queries/RepositoryFields.graphql"
-$repositoryQuery = (Get-Content -Raw "$PSScriptRoot/../queries/Repository.graphql") + $repositoryFields
+$repositoryByIDQuery = (Get-Content -Raw "$PSScriptRoot/../queries/RepositoryByID.graphql") + $repositoryFields
+$repositoryByCloneURLQuery = (Get-Content -Raw "$PSScriptRoot/../queries/RepositoryByCloneURL.graphql") + $repositoryFields
 $repositoriesQuery = (Get-Content -Raw "$PSScriptRoot/../queries/Repositories.graphql") + $repositoryFields
 function Get-Repository {
     <#
@@ -43,12 +44,21 @@ function Get-Repository {
         [SecureString] $Token
     )
     process {
-        if ($Id -or $CloneUrl) {
+        if ($Id) {
             $vars = @{
                 id       = $Id
+            }
+            $data = Invoke-ApiRequest -Query $repositoryByIDQuery -Variables $vars -Endpoint $Endpoint -Token $Token
+            $data.node
+            if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
+                $count = if ($data.node) { 1 } else { 0 }
+                $PSCmdlet.PagingParameters.NewTotalCount($count, 1)
+            }
+        } elseif ($CloneUrl) {
+            $vars = @{
                 cloneUrl = $CloneUrl
             }
-            $data = Invoke-ApiRequest -Query $repositoryQuery -Variables $vars -Endpoint $Endpoint -Token $Token
+            $data = Invoke-ApiRequest -Query $repositoryByCloneURLQuery -Variables $vars -Endpoint $Endpoint -Token $Token
             $data.repository
             if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
                 $count = if ($data.repository) { 1 } else { 0 }

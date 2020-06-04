@@ -1,0 +1,7 @@
+query GetRepositoryByID($id: ID!) {
+    node(id: $id) {
+        ... on Repository {
+            ...RepositoryFields
+        }
+    }
+}

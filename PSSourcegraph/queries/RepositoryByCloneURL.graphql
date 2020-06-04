@@ -1,0 +1,5 @@
+query GetRepositoryByCloneURL($cloneUrl: String!) {
+    repository(cloneURL: $cloneUrl) {
+        ...RepositoryFields
+    }
+}
