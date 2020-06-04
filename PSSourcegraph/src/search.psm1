@@ -66,7 +66,7 @@ function Search- {
             $data.search.results.timedout.name | Write-Warning
         }
         if ($PSCmdlet.PagingParameters.IncludeTotalCount) {
-            $PSCmdlet.PagingParameters.NewTotalCount($data.search.results.resultCount, 1)
+            $PSCmdlet.PagingParameters.NewTotalCount($data.search.results.matchCount, 1)
         }
         if ($data.search.results.limitHit) {
             Write-Warning "Result limit hit"

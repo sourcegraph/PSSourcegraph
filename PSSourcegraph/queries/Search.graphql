@@ -107,7 +107,7 @@ query Search($query: String!, $patternType: SearchPatternType) {
             timedout {
                 ...RepositoryFields
             }
-            resultCount
+            matchCount
             elapsedMilliseconds
         }
     }
