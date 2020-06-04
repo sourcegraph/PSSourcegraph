@@ -1,7 +1,13 @@
 {
   "private": true,
+  "scripts": {
+    "prettier": "prettier '**/*.{graphql,md,json,js,yml}' --list-different --write",
+    "prettier-check": "yarn prettier --write=false"
+  },
   "devDependencies": {
     "@semantic-release/exec": "^5.0.0",
+    "@sourcegraph/prettierrc": "^3.0.3",
+    "prettier": "^2.0.5",
     "semantic-release": "^17.0.8"
   }
 }

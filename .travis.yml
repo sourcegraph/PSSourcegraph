@@ -1,4 +1,7 @@
-language: minimal
+language: node_js
+node_js: '14'
+cache:
+  yarn: true
 
 env:
   global:
@@ -19,6 +22,7 @@ before_install:
   - sudo apt-get install -y powershell dotnet-sdk-3.1
 
 script:
+  - yarn prettier-check
   - pwsh -c 'Import-Module ./PSSourcegraph/PSSourcegraph.psd1'
 
 if: tag IS blank
@@ -27,11 +31,6 @@ jobs:
   include:
     - stage: test
     - stage: release
-      # Publish-Module needs dotnet CLI
-      language: node_js
-      node_js: '14'
-      cache:
-        yarn: true
       install:
         - yarn --frozen-lockfile
       script:

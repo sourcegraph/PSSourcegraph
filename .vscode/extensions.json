@@ -1,6 +1,9 @@
 {
   "recommendations": [
     "ms-vscode.PowerShell",
-    "redhat.vscode-xml"
-  ]
+    "redhat.vscode-xml",
+    "apollographql.vscode-apollo",
+    "esbenp.prettier-vscode",
+    "EditorConfig.EditorConfig",
+  ],
 }
